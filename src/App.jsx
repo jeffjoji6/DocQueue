@@ -1,12 +1,12 @@
 import React from 'react';
 import './App.css';
-import Home from './components/Home';
-import Navbar_white from './components/Navbar_white';
+import Home from './pages/Home.jsx';
+
 
 function App() {
   return (
     <>
-      <Navbar_white />
+     
       <Home />
     </>
   );

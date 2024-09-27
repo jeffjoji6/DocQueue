@@ -1,6 +1,7 @@
 import React from 'react';
 import homepic from '../assets/images/homepic.png';
 import hospic from '../assets/images/samplehos.png';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
   return (
@@ -16,8 +17,12 @@ const Home = () => {
 
     </div>
     <div className='mt-16'>
-    <button className='border rounded-2xl bg-white ml-16 h-[40px] w-[232px] uppercase hover:text-blue-500 '>Book An Appointment</button>
-    <button className='border bg-white rounded-2xl h-[40px] w-[162px] ml-10 uppercase hover:text-blue-500'>Your Bookings</button>
+      
+    <Link to="/Hospitaldetails" className='rounded-2xl  ml-16 uppercase text-white hover:text-black'>
+      Book An Appointment
+    </Link>
+    
+    <button className=' text-white rounded-2xl h-[40px] w-[162px] ml-10 uppercase hover:text-black'>Your Bookings</button>
     <input type='search' className='h-[40px] w-[300px] rounded-2xl ml-10' placeholder=' Search'></input>
     </div>
     <div className='ml-16 bg-white w-11/12 h-3/4 mt-9 rounded-2xl'>

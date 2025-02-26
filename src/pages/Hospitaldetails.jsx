@@ -9,7 +9,8 @@ const Hospitaldetails = () => {
       <div className='bg-slate-50 w-11/12 mt-12 rounded-md'>
         <div className='pl-16'>
           <h1 className='text-2xl pt-10'>
-            Bharathi Hospital, Tambaram
+            
+Sreenethra Eye Care Trivandrum
           </h1>
           <h4 className='text-slate-400'>
             Multi-speciality Hospital
@@ -19,18 +20,13 @@ const Hospitaldetails = () => {
           <div className='col-span-2'>
             <img src={hos} alt="Hospital" className='w-[800px] h-[500px] m-16 rounded-md shadow-lg' />
             <p className='ml-16 max-w-[800px]'>
-              Lorem ipsum dolor sit amet consectetur. Tincidunt habitasse pretium purus in sed. Purus tempor sit nec lectus quis fermentum urna nulla. Learn More.
+            Sreenethra group of hospitals is the foremost provider of eye care in South India. Their newly launched referral center South Asian Centre for Ophthalmic Care is a jewel in the crown that now provides the tertiary treatment options for the most complex eye conditions cost effectively.
             </p>
             <div className='grid grid-cols-2 pt-10'>
   <div className='pl-16 '>
     <h1 className='font-semibold'>Treatments Available</h1>
     <ul className='list-none text-gray-500'>
-      <li className='flex items-start'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 mt-1"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg><span className='pl-2'>Cardiology</span></li>
-      <li className='flex items-start'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 mt-1"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg><span className='pl-2'>Orthopedics</span></li>
-      <li className='flex items-start'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 mt-1"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg><span className='pl-2'>Neurology</span></li>
-      <li className='flex items-start'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 mt-1"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg><span className='pl-2'>General Surgery</span></li>
-      <li className='flex items-start'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 mt-1"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg><span className='pl-2'>ENT</span></li>
-      <li className='flex items-start'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 mt-1"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg><span className='pl-2'>Dermatology</span></li>
+     
       <li className='flex items-start'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 mt-1"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg><span className='pl-2'>Ophthalmology</span></li>
      
     </ul>
@@ -38,11 +34,62 @@ const Hospitaldetails = () => {
   <div className='pl-16 '>
     <h1 className='font-semibold'>Top Doctors</h1>
     <ul className='list-none text-gray-500'>
-      <li className='flex items-start'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 mt-1"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg><span className='pl-2'>Dr. John Smith</span></li>
-      <li className='flex items-start'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 mt-1"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg><span className='pl-2'>Dr. Sarah Jones</span></li>
-      <li className='flex items-start'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 mt-1"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg><span className='pl-2'>Dr. Michael Brown</span></li>
-      <li className='flex items-start'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 mt-1"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg><span className='pl-2'>Dr. Emily Garcia</span></li>
-      <li className='flex items-start'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 mt-1"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg><span className='pl-2'>Dr. Daniel Lee</span></li>
+    <li className='flex items-start'>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 mt-1">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+  </svg>
+  <span className='pl-2'>Dr. Ashad Sivaraman</span>
+</li>
+
+<li className='flex items-start'>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 mt-1">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+  </svg>
+  <span className='pl-2'>Dr. Mahadevan.K</span>
+</li>
+
+<li className='flex items-start'>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 mt-1">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+  </svg>
+  <span className='pl-2'>Dr. Swapna Nair</span>
+</li>
+
+<li className='flex items-start'>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 mt-1">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+  </svg>
+  <span className='pl-2'>Dr. Anoop Sivaraman</span>
+</li>
+
+<li className='flex items-start'>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 mt-1">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+  </svg>
+  <span className='pl-2'>Dr. Harshali Yadav</span>
+</li>
+
+<li className='flex items-start'>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 mt-1">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+  </svg>
+  <span className='pl-2'>Dr. Anila George</span>
+</li>
+
+<li className='flex items-start'>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 mt-1">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+  </svg>
+  <span className='pl-2'>Dr. Pinki</span>
+</li>
+
+<li className='flex items-start'>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 mt-1">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+  </svg>
+  <span className='pl-2'>Dr. Aiswaria</span>
+</li>
+
     </ul>
   </div>
 </div>

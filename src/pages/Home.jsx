@@ -21,8 +21,8 @@ const Home = () => {
     <Link to="/Hospitaldetails" className='rounded-2xl  ml-16 uppercase text-white hover:text-black'>
       Book An Appointment
     </Link>
+    <Link to='/timeslot'><button className=' text-white rounded-2xl h-[40px] w-[162px] ml-10 uppercase hover:text-black'>Your Bookings</button></Link>
     
-    <button className=' text-white rounded-2xl h-[40px] w-[162px] ml-10 uppercase hover:text-black'>Your Bookings</button>
     <input type='search' className='h-[40px] w-[300px] rounded-2xl ml-10' placeholder=' Search'></input>
     </div>
     <div className='ml-16 bg-white w-11/12 h-3/4 mt-9 rounded-2xl'>
@@ -31,54 +31,16 @@ const Home = () => {
     <div className='grid grid-cols-4 mt-8 ml-28 '>
       <div>
         <img src={hospic} className='w-250 h-200'></img>
-        <p className='text-[15px] bold'>Bharathi Hospital, Tambaram</p>
+        <p className='text-[15px] bold'>Sreenethra Eye Care, Trivandrum</p>
         <p className='text-[10px] text-gray-400 bold'>Multi-speciality Hospital</p>
-        <button className='text-[11px] bold text-blue-500 underline'>Book your appointment</button>
+        <Link to="/Hospitaldetails" className='text-[14px] bold text-blue-500 underline'>
+      Book An Appointment
+    </Link>
+     
       </div>
-      <div>
-        <img src={hospic} className='w-250 h-200'></img>
-        <p className='text-[15px] bold'>Bharathi Hospital, Tambaram</p>
-        <p className='text-[10px] text-gray-400 bold'>Multi-speciality Hospital</p>
-        <button className='text-[11px] bold text-blue-500 underline'>Book your appointment</button>
-      </div>
-      <div>
-        <img src={hospic} className='w-250 h-200'></img>
-        <p className='text-[15px] bold'>Bharathi Hospital, Tambaram</p>
-        <p className='text-[10px] text-gray-400 bold'>Multi-speciality Hospital</p>
-        <button className='text-[11px] bold text-blue-500 underline'>Book your appointment</button>
-      </div>
-      <div>
-        <img src={hospic} className='w-250 h-200'></img>
-        <p className='text-[15px] bold'>Bharathi Hospital, Tambaram</p>
-        <p className='text-[10px] text-gray-400 bold'>Multi-speciality Hospital</p>
-        <button className='text-[11px] bold text-blue-500 underline'>Book your appointment</button>
-      </div>
-      <div className='mt-10'>
-        <img src={hospic} className='w-250 h-200'></img>
-        <p className='text-[15px] bold'>Bharathi Hospital, Tambaram</p>
-        <p className='text-[10px] text-gray-400 bold'>Multi-speciality Hospital</p>
-        <button className='text-[11px] bold text-blue-500 underline'>Book your appointment</button>
-      </div>
-      <div className='mt-10'>
-        <img src={hospic} className='w-250 h-200'></img>
-        <p className='text-[15px] bold'>Bharathi Hospital, Tambaram</p>
-        <p className='text-[10px] text-gray-400 bold'>Multi-speciality Hospital</p>
-        <button className='text-[11px] bold text-blue-500 underline'>Book your appointment</button>
-      </div>
-      <div className='mt-10'>
-        <img src={hospic} className='w-250 h-200'></img>
-        <p className='text-[15px] bold'>Bharathi Hospital, Tambaram</p>
-        <p className='text-[10px] text-gray-400 bold'>Multi-speciality Hospital</p>
-        <button className='text-[11px] bold text-blue-500 underline'>Book your appointment</button>
-      </div>
-      <div className='mt-10'>
-        <img src={hospic} className='w-250 h-200'></img>
-        <p className='text-[15px] bold'>Bharathi Hospital, Tambaram</p>
-        <p className='text-[10px] text-gray-400 bold'>Multi-speciality Hospital</p>
-        <button className='text-[11px] bold text-blue-500 underline'>Book your appointment</button>
-      </div>
+      
 
-    </div>
+    </div>   
     </div>
     </div>
   );

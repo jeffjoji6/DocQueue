@@ -361,8 +361,9 @@ const Quiz = () => {
 
   return (
     <div className="w-full h-screen flex justify-center">
-      <div className="bg-slate-50 w-11/12 mt-12 rounded-md">
-        <div className="w-4/12 h-3/5 shadow-xl mx-auto mt-24 flex flex-col items-center justify-center rounded-2xl hover:shadow-2xl">
+      <div className="bg-slate-50 w-11/12 mt-12 rounded-md  pt-40">
+      <div className="w-6/12 h-auto shadow-xl mx-auto mt-16 p-6 flex flex-col items-center justify-center rounded-2xl hover:shadow-2xl">
+
           <h1 className="text-2xl font-bold text-center align-top">
             {currentQuestion.question}
           </h1>
@@ -376,7 +377,9 @@ const Quiz = () => {
             }}
           />
 
-          <div className=" pt-5 flex flex-wrap justify-center text-md w-full">
+<div className="grid grid-cols-2 gap-4 pt-5 place-items-center w-full">
+
+
             {currentQuestion.options.map((option, index) => (
               <button
                 key={index}

@@ -136,6 +136,10 @@ app.post("/appointments", async (req, res) => {
 //   }
 // });
 
+app.get("/api/hospital", (req, res) => {
+  res.json({ lat: 12.975, lng: 77.605, name: "City Hospital" });
+});
+
 // Example endpoint to retrieve appointments with populated related data
 app.get("/appointments", async (req, res) => {
   try {

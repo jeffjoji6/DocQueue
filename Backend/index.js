@@ -3,6 +3,10 @@ const mongoose = require("mongoose");
 
 const cors = require("cors"); // Import cors middleware
 
+const http = require("http");
+const socketIo = require("socket.io");
+
+
 const app = express();
 app.use(cors()); // Enable CORS for all routes
 app.use(express.json());
@@ -136,8 +140,41 @@ app.post("/appointments", async (req, res) => {
 //   }
 // });
 
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
+
+// Endpoint to return a hard-coded hospital location
 app.get("/api/hospital", (req, res) => {
   res.json({ lat: 12.975, lng: 77.605, name: "City Hospital" });
+});
+
+// Socket.io: Listen for ambulance call and simulate dispatch updates
+io.on("connection", (socket) => {
+  console.log("Client connected:", socket.id);
+
+  socket.on("callAmbulance", (data) => {
+    console.log("Ambulance requested from:", data);
+    // Simulate an initial ETA of 10 minutes
+    let eta = 10; 
+    const interval = setInterval(() => {
+      if (eta > 0) {
+        eta--;
+        socket.emit("ambulanceUpdate", { eta, status: "En Route" });
+      } else {
+        socket.emit("ambulanceUpdate", { eta: 0, status: "Arrived" });
+        clearInterval(interval);
+      }
+    }, 5000); // For demo: update every 5 seconds
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected:", socket.id);
+  });
 });
 
 // Example endpoint to retrieve appointments with populated related data

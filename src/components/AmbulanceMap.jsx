@@ -1,58 +1,47 @@
-import React, { useEffect, useState } from "react";
-import { MapContainer, TileLayer } from "react-leaflet";
+import React, { useEffect, useRef } from "react";
+import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
-import L from "leaflet";
 import "leaflet-routing-machine";
 
-const AmbulanceMap = () => {
-  const [userLocation, setUserLocation] = useState(null);
-  const [hospitalLocation, setHospitalLocation] = useState(null); // Example hospital coordinates
-  useEffect(() => {
-    if (userLocation) {
-      fetch("http://localhost:3000/api/hospital")
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-          setHospitalLocation(data);
-        });
-    }
-  }, [userLocation]);
-  useEffect(() => {
-    // Get user's current location
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setUserLocation({ lat: latitude, lng: longitude });
-      },
-      (error) => {
-        console.error("Error fetching user location:", error);
-        alert("Could not get your location. Please enable GPS.");
-      },
-      { enableHighAccuracy: true }
-    );
-  }, []);
+// Receives userLocation, hospitalLocation, and a callback to report route details.
+const AmbulanceMap = ({ userLocation, hospitalLocation, onRouteDetails }) => {
+  const mapRef = useRef(null);
 
   useEffect(() => {
     if (userLocation && hospitalLocation) {
-      // Ensure hospitalLocation is not null
       const map = L.map("map").setView(userLocation, 13);
+      mapRef.current = map;
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "&copy; OpenStreetMap contributors",
       }).addTo(map);
 
-      L.Routing.control({
+      const routingControl = L.Routing.control({
         waypoints: [
           L.latLng(userLocation.lat, userLocation.lng),
           L.latLng(hospitalLocation.lat, hospitalLocation.lng),
         ],
-        routeWhileDragging: true,
+        routeWhileDragging: false,
       }).addTo(map);
-    }
-  }, [userLocation, hospitalLocation]);
 
-  return <div id="map" style={{ height: "500px", width: "100%" }} />;
+      routingControl.on("routesfound", function (e) {
+        const routes = e.routes;
+        if (routes && routes.length > 0) {
+          const summary = routes[0].summary;
+          // Pass route summary (distance in meters, time in seconds) to parent
+          onRouteDetails(summary);
+        }
+      });
+    }
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+      }
+    };
+  }, [userLocation, hospitalLocation, onRouteDetails]);
+
+  return <div id="map" style={{ height: "100%", width: "100%" }} />;
 };
 
 export default AmbulanceMap;

@@ -3,6 +3,10 @@ import homepic from '../assets/images/homepic.png';
 import hospic from '../assets/images/samplehos.png';
 import { Link } from 'react-router-dom';
 
+
+import Chatbot from "../components/Chatbot";
+
+
 const Home = () => {
   return (
     <div className="w-full h-screen" id="bck">
@@ -53,9 +57,15 @@ const Home = () => {
             <Link to="/Hospitaldetails" className="text-[14px] font-bold text-blue-500 underline mt-2 block">
               Book An Appointment
             </Link>
+           
           </div>
+
         </div>
+
       </div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-200">
+      <Chatbot />
+    </div>
     </div>
   );
 }

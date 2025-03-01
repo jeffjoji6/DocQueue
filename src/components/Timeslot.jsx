@@ -45,7 +45,8 @@ const Timeslot = () => {
         <h2 className="text-3xl font-bold text-center mb-10 text-blue-600">My Appointments</h2>
         
         {appointments.length > 0 ? (
-          <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
 
             {appointments.map((appointment) => (
               <li key={appointment._id} className="bg-gray-50 border border-gray-200 rounded-lg shadow-sm p-6">

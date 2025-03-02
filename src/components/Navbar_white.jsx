@@ -12,6 +12,7 @@ const Navbar_white = () => {
         <Link to='/timeslot' ><button className='header pt-[26px]'>Appointments</button></Link>
         
         <Link to='/aboutus' ><button className='header pt-[26px]'>About us</button></Link>
+        <Link to='/emergency' ><button className='header pt-[26px] animate-pulse text-red-600'>Emergency</button></Link>
         
       </div>
     </div>

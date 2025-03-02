@@ -120,17 +120,23 @@ const Emergency = () => {
             </div>
           )}
           {ambulanceStatus !== "Idle" && (
-            <div className="w-full max-w-5xl bg-blue-50 rounded-2xl shadow-md p-6 text-center">
-              <p className="text-2xl font-bold text-blue-700">
-                Ambulance Status: {ambulanceStatus}
-              </p>
-              {eta !== null && (
-                <p className="mt-2 text-lg text-gray-700">
-                  Estimated Arrival: {eta} minute{eta !== 1 && "s"}
-                </p>
-              )}
-            </div>
-          )}
+  <div className="w-full max-w-5xl bg-red-600 text-white rounded-2xl shadow-lg p-8 text-center animate-pulse">
+    <p className="text-3xl font-extrabold">
+      🚨 EMERGENCY ALERT: {ambulanceStatus} 🚨
+    </p>
+    {eta !== null && (
+      <p className="mt-4 text-xl font-semibold">
+        🚑 Estimated Arrival: <span className="font-bold">{eta}</span> minute{eta !== 1 && "s"}
+      </p>
+    )}
+    <p className="mt-6 text-lg font-medium">
+      📞 Need help? Call now:{" "}
+      <a href="tel:+11234567890" className="underline font-bold">
+        +91 9124125655
+      </a>
+    </p>
+  </div>
+)}
         </>
       )}
     </div>

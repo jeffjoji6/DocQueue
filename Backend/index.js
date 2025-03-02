@@ -1,25 +1,22 @@
 const express = require("express");
 const mongoose = require("mongoose");
-
-const cors = require("cors"); // Import cors middleware
-
+const cors = require("cors");
 const http = require("http");
 const socketIo = require("socket.io");
-
+const axios = require("axios");
+require("dotenv").config();
 
 const app = express();
-app.use(cors()); // Enable CORS for all routes
+app.use(cors());
 app.use(express.json());
-
-require("dotenv").config(); // Load environment variables
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-// Appointment Schema with improvements
+
 const appointmentSchema = new mongoose.Schema({
-  patientId: { type: Number, required: true }, // Changed to integer type
+  patientId: { type: Number, required: true },
   hospitalId: { type: Number, required: true },
   doctorId: { type: Number, required: true },
   selectedTimeSlot: {
@@ -53,7 +50,6 @@ const appointmentSchema = new mongoose.Schema({
   },
 });
 
-// Indexing for faster querying on specific fields
 appointmentSchema.index({ hospitalId: 1, doctorId: 1, selectedTimeSlot: 1 });
 appointmentSchema.index({ exactTime: 1 });
 
@@ -71,7 +67,6 @@ app.post("/appointments", async (req, res) => {
       date,
       disease,
     } = req.body;
-
     const appointment = new Appointment({
       patientId,
       hospitalId,
@@ -82,7 +77,6 @@ app.post("/appointments", async (req, res) => {
       disease,
       status: "scheduled",
     });
-
     await appointment.save();
     res.status(201).send(appointment);
   } catch (error) {
@@ -90,67 +84,42 @@ app.post("/appointments", async (req, res) => {
   }
 });
 
-// Schedule Appointment with Priority
-// app.post('/appointments/schedule', async (req, res) => {
-//   try {
-//     const { patientId, hospitalId, doctorId, selectedTimeSlot, priorityRating, date, disease } = req.body;
+// Ollama Chatbot Integration
+app.post("/chat", async (req, res) => {
+  try {
+    const { message } = req.body;
 
-//     // Fetch all appointments in the selected slot and sort by priority
-//     const appointmentsInSlot = await Appointment.find({ hospitalId, doctorId, selectedTimeSlot })
-//       .sort({ priorityRating: -1 });
+    if (!message) {
+      return res.status(400).json({ error: "Message is required" });
+    }
 
-//     // Validate and parse the start and end times
-//     const [startHour, endHour] = selectedTimeSlot.split('-');
-//     if (!startHour || !endHour) {
-//       return res.status(400).send({ message: "Invalid time slot format" });
-//     }
+    const ollamaResponse = await axios.post(
+      "http://localhost:11434/api/generate",
+      {
+        model: "mistral",
+        prompt: message,
+      },
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
 
-//     const startTime = new Date(`2024-01-01T${startHour.padStart(2, '0')}:00:00Z`);
-//     const endTime = new Date(`2024-01-01T${endHour.padStart(2, '0')}:00:00Z`);
-//     if (isNaN(startTime) || isNaN(endTime)) {
-//       return res.status(400).send({ message: "Failed to parse start or end time" });
-//     }
-
-//     // Set a fixed duration of 10 minutes (600,000 ms) for each appointment
-//     const appointmentDuration = 10 * 60 * 1000;
-//     const exactTime = new Date(startTime.getTime() + appointmentDuration * appointmentsInSlot.length);
-
-//     // Ensure exactTime is within the selected time slot
-//     if (exactTime >= endTime) {
-//       return res.status(400).send({ message: "The selected time slot is fully booked." });
-//     }
-
-//     // Create the appointment with the calculated exact time
-//     const newAppointment = new Appointment({
-//       patientId,
-//       hospitalId,
-//       doctorId,
-//       selectedTimeSlot,
-//       priorityRating,
-//       exactTime,
-//       date,
-//       disease,
-//       status: 'scheduled'
-//     });
-
-//     await newAppointment.save();
-//     res.status(201).send(newAppointment);
-//   } catch (error) {
-//     res.status(400).send(error);
-//   }
-// });
+    if (ollamaResponse.data && ollamaResponse.data.response) {
+      res.json({ reply: ollamaResponse.data.response });
+    } else {
+      res.status(500).json({ error: "Invalid response from Ollama" });
+    }
+  } catch (error) {
+    console.error("Ollama API Error:", error.message);
+    res
+      .status(500)
+      .json({ error: "Failed to generate a response from Ollama" });
+  }
+});
 
 const server = http.createServer(app);
 const io = socketIo(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-  },
-});
-
-// Endpoint to return a hard-coded hospital location
-app.get("/api/hospital", (req, res) => {
-  res.json({ lat: 12.975, lng: 77.605, name: "City Hospital" });
+  cors: { origin: "*", methods: ["GET", "POST"] },
 });
 
 // Socket.io: Listen for ambulance call and simulate dispatch updates
@@ -159,8 +128,7 @@ io.on("connection", (socket) => {
 
   socket.on("callAmbulance", (data) => {
     console.log("Ambulance requested from:", data);
-    // Simulate an initial ETA of 10 minutes
-    let eta = 10; 
+    let eta = 10;
     const interval = setInterval(() => {
       if (eta > 0) {
         eta--;
@@ -169,7 +137,7 @@ io.on("connection", (socket) => {
         socket.emit("ambulanceUpdate", { eta: 0, status: "Arrived" });
         clearInterval(interval);
       }
-    }, 5000); // For demo: update every 5 seconds
+    }, 5000);
   });
 
   socket.on("disconnect", () => {
@@ -177,91 +145,6 @@ io.on("connection", (socket) => {
   });
 });
 
-// Example endpoint to retrieve appointments with populated related data
-app.get("/appointments", async (req, res) => {
-  try {
-    const appointments = await Appointment.find()
-      .populate("patientId", "name age") // Fetch specific patient fields
-      .populate("hospitalId", "name location") // Fetch specific hospital fields
-      .populate("doctorId", "name specialty"); // Fetch specific doctor fields
-    res.status(200).send(appointments);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
-
-app.get("/appointments/priority", async (req, res) => {
-  const { hospitalId, selectedTimeSlot } = req.query;
-
-  try {
-    if (!hospitalId || !selectedTimeSlot) {
-      return res.status(400).send({
-        message:
-          "Missing required query parameters: hospitalId and selectedTimeSlot",
-      });
-    }
-
-    const appointments = await Appointment.find({
-      hospitalId,
-      selectedTimeSlot,
-    }).sort({ priorityRating: -1 });
-
-    // Group appointments by doctorId
-    const groupedByDoctor = appointments.reduce((result, appointment) => {
-      const docId = appointment.doctorId;
-      if (!result[docId]) {
-        result[docId] = {
-          doctorId: docId,
-          appointments: [],
-        };
-      }
-      result[docId].appointments.push(appointment);
-      return result;
-    }, {});
-
-    const resultArray = Object.values(groupedByDoctor);
-    res.status(200).send(resultArray);
-  } catch (error) {
-    res.status(500).send({
-      message: "Failed to fetch appointments",
-      error: error.message,
-    });
-  }
-});
-
-app.get("/appointments/slot", async (req, res) => {
-  const { hospitalId, doctorId, selectedTimeSlot } = req.query;
-
-  try {
-    // Validate input parameters
-    if (!hospitalId || !doctorId || !selectedTimeSlot) {
-      return res.status(400).send({
-        message:
-          "Missing required query parameters: hospitalId, doctorId, selectedTimeSlot",
-      });
-    }
-
-    // Find appointments that match the given criteria and sort by priorityRating in descending order
-    const appointments = await Appointment.find({
-      hospitalId,
-      doctorId,
-      selectedTimeSlot,
-    })
-      .sort({ priorityRating: -1 }) // Sort by priorityRating in descending order
-      .populate("patientId", "name age") // Fetch specific fields from Patient collection
-      .populate("hospitalId", "name location") // Fetch specific fields from Hospital collection
-      .populate("doctorId", "name specialty"); // Fetch specific fields from Doctor collection
-
-    res.status(200).send(appointments);
-  } catch (error) {
-    res.status(500).send({
-      message: "Failed to fetch appointments",
-      error: error.message,
-    });
-  }
-});
-
-// Start the server
-app.listen(3000, () => {
+server.listen(3000, () => {
   console.log("Server is running on port 3000");
 });

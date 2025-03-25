@@ -4,16 +4,29 @@ const cors = require("cors");
 const http = require("http");
 const socketIo = require("socket.io");
 const axios = require("axios");
+const session = require("express-session");
 require("dotenv").config();
+const { generateResponse } = require('./services/aiDoctor');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Session middleware
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your-secret-key',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Set to true if using HTTPS
+}));
+
 // Hugging Face API configuration
-const HUGGING_FACE_API_URL =
-  "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2";
+const HUGGING_FACE_API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2";
+const MEDICAL_MODEL_URL = "https://api-inference.huggingface.co/models/facebook/opt-350m";
 const HUGGING_FACE_API_KEY = process.env.HUGGING_FACE_API_KEY;
+
+// Store chat history for each session (in production, use a proper database)
+const chatHistory = new Map();
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
@@ -89,45 +102,26 @@ app.post("/appointments", async (req, res) => {
   }
 });
 
-// Chatbot Integration with Hugging Face
-app.post("/chat", async (req, res) => {
+// AI Doctor endpoint
+app.post('/api/ai-doctor/chat', async (req, res) => {
   try {
-    const { message } = req.body;
-
-    if (!message) {
-      return res.status(400).json({ error: "Message is required" });
+    const { message, disease, score } = req.body;
+    
+    if (!message || !disease) {
+      return res.status(400).json({ 
+        error: 'Missing required fields',
+        message: 'Please provide both message and disease information'
+      });
     }
 
-    const response = await axios.post(
-      HUGGING_FACE_API_URL,
-      {
-        inputs: `<s>[INST] ${message} [/INST]`,
-        parameters: {
-          max_new_tokens: 1024,
-          temperature: 0.7,
-          top_p: 0.95,
-        },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${HUGGING_FACE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    if (response.data && response.data[0].generated_text) {
-      // Clean up the response by removing the instruction format
-      const cleanResponse = response.data[0].generated_text
-        .replace(/<s>\[INST\].*?\[\/INST\]\s*/, "")
-        .trim();
-      res.json({ reply: cleanResponse });
-    } else {
-      res.status(500).json({ error: "Invalid response from AI model" });
-    }
+    const response = await generateResponse(message, disease, score);
+    res.json({ response });
   } catch (error) {
-    console.error("AI API Error:", error.message);
-    res.status(500).json({ error: "Failed to generate a response" });
+    console.error('Error in AI doctor endpoint:', error);
+    res.status(500).json({ 
+      error: 'Failed to process request',
+      message: 'An error occurred while processing your request. Please try again.'
+    });
   }
 });
 

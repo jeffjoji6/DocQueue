@@ -10,6 +10,7 @@ import Quiz from "./components/Quiz.jsx";
 import Timeslot from "./components/Timeslot.jsx";
 import Confirmationpop from "./components/Confirmationpop.jsx";
 import AboutUs from "./pages/Aboutus.jsx";
+import HospitalList from "./pages/HospitalList.jsx";
 
 const Layout = () => {
   return (
@@ -31,6 +32,7 @@ const router = createBrowserRouter([
       { path: "/timeslot", element: <Timeslot /> },
       { path: "/Confirmed", element: <Confirmationpop /> },
       { path: "/Aboutus", element: <AboutUs /> },
+      { path: "/hospitallist", element: <HospitalList /> },
     ],
   },
 ]);

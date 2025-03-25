@@ -37,15 +37,15 @@ const Timeslot = () => {
   }, []);
 
   if (loading)
-    return <p className="text-center mt-10 text-lg">Loading appointments...</p>;
+    return <p className="text-center pt-28 text-lg">Loading appointments...</p>;
   if (error)
     return (
-      <p className="text-center text-red-500 mt-10 text-lg">Error: {error}</p>
+      <p className="text-center text-red-500 pt-28 text-lg">Error: {error}</p>
     );
 
   return (
-    <div className="w-full h-screen flex justify-center bg-gray-100" id="bck">
-      <div className="bg-white w-10/12 mt-12 rounded-md shadow-md p-6">
+    <div className="min-h-screen pt-20 bg-gradient-to-b from-blue-50 via-white to-blue-50 px-4 md:px-6" id="bck">
+      <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-6 mt-8">
         <h2 className="text-3xl font-bold text-center mb-10 text-blue-600">
           My Appointments
         </h2>
@@ -55,7 +55,7 @@ const Timeslot = () => {
             {appointments.map((appointment) => (
               <li
                 key={appointment._id}
-                className="bg-gray-50 border border-gray-200 rounded-lg shadow-sm p-6"
+                className="bg-gray-50 border border-gray-200 rounded-lg shadow-sm p-6 transition-all hover:shadow-md hover:bg-blue-50"
               >
                 <div className="flex flex-col space-y-2">
                   <p className="text-xl font-semibold text-gray-700">
@@ -85,9 +85,17 @@ const Timeslot = () => {
             ))}
           </ul>
         ) : (
-          <p className="text-center text-gray-600 mt-6 text-lg">
-            No appointments found.
-          </p>
+          <div className="text-center py-10">
+            <p className="text-gray-600 text-lg mb-6">
+              No appointments found.
+            </p>
+            <a 
+              href="/hospitallist" 
+              className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md"
+            >
+              Book an Appointment
+            </a>
+          </div>
         )}
       </div>
     </div>

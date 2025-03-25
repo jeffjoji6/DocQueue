@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
 import hospic from '../assets/images/samplehos.png';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Chatbot from "../components/Chatbot";
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
   
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/hospitallist?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   const hospitals = [
     {
       id: 1,
@@ -46,25 +54,30 @@ const Home = () => {
             </p>
             {/* Search Bar */}
             <div className="max-w-2xl mx-auto mb-8 relative">
-              <div className="relative">
-                <input
-                  type="search"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-14 px-6 rounded-full border-2 border-white/20 bg-white/10 backdrop-blur-md
-                           focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/50 transition-all
-                           text-white placeholder-white/70"
-                  placeholder="Search hospitals, doctors..."
-                />
-                <button className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white transition-colors">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </button>
-              </div>
+              <form onSubmit={handleSearch}>
+                <div className="relative">
+                  <input
+                    type="search"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full h-14 px-6 rounded-full border-2 border-white/20 bg-white/10 backdrop-blur-md
+                             focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/50 transition-all
+                             text-white placeholder-white/70"
+                    placeholder="Search hospitals, doctors..."
+                  />
+                  <button 
+                    type="submit"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white transition-colors"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </button>
+                </div>
+              </form>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/Hospitaldetails">
+              <Link to="/hospitallist">
                 <button className="w-full sm:w-auto px-8 py-4 bg-white text-blue-600 rounded-full hover:bg-blue-50 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">
                   Book Appointment
                 </button>
@@ -78,7 +91,7 @@ const Home = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900">Featured Hospitals</h2>
-          <Link to="/Hospitaldetails" className="text-blue-600 hover:text-blue-700 font-medium">
+          <Link to="/hospitallist" className="text-blue-600 hover:text-blue-700 font-medium">
             View All →
           </Link>
         </div>
@@ -108,7 +121,7 @@ const Home = () => {
                     </span>
                   ))}
                 </div>
-                <Link to="/Hospitaldetails">
+                <Link to="/hospitaldetails">
                   <button className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors">
                     Book Appointment
                   </button>

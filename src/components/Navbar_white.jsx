@@ -18,7 +18,7 @@ const Navbar_white = () => {
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
             <Link to="/timeslot" className="text-gray-700 hover:text-blue-600 transition">
-              Appointments
+              My Appointments
             </Link>
             <Link to="/aboutus" className="text-gray-700 hover:text-blue-600 transition">
               About us

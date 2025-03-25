@@ -118,7 +118,7 @@ const AboutUs = () => {
               Ready to Transform Your Healthcare Experience?
             </h2>
             <p className="text-lg text-gray-600 mb-8">
-              Experience the future of healthcare scheduling with our AI-powered platform. Start your journey to hassle-free medical appointments today.
+              Join thousands of satisfied users who have already discovered the convenience of DocQueue.
             </p>
             <Link to="/Hospitaldetails">
               <button className="px-8 py-4 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">

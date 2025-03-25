@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
+import logo from '../assets/logo.png';
 import {
   HomeIcon,
   UsersIcon,
@@ -61,7 +62,7 @@ export default function Layout({ children }) {
                   <div className="flex h-16 shrink-0 items-center">
                     <img
                       className="h-8 w-auto"
-                      src="/hospital-logo.png"
+                      src={logo}
                       alt="Hospital Logo"
                     />
                     <span className="ml-2 text-xl font-semibold">
@@ -114,7 +115,7 @@ export default function Layout({ children }) {
           <div className="flex h-16 shrink-0 items-center">
             <img
               className="h-8 w-auto"
-              src="/hospital-logo.png"
+              src={logo}
               alt="Hospital Logo"
             />
             <span className="ml-2 text-xl font-semibold">Hospital Admin</span>

@@ -10,6 +10,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Hugging Face API configuration
+const HUGGING_FACE_API_URL =
+  "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2";
+const HUGGING_FACE_API_KEY = process.env.HUGGING_FACE_API_KEY;
+
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -84,7 +89,7 @@ app.post("/appointments", async (req, res) => {
   }
 });
 
-// Ollama Chatbot Integration
+// Chatbot Integration with Hugging Face
 app.post("/chat", async (req, res) => {
   try {
     const { message } = req.body;
@@ -93,27 +98,36 @@ app.post("/chat", async (req, res) => {
       return res.status(400).json({ error: "Message is required" });
     }
 
-    const ollamaResponse = await axios.post(
-      "http://localhost:11434/api/generate",
+    const response = await axios.post(
+      HUGGING_FACE_API_URL,
       {
-        model: "mistral",
-        prompt: message,
+        inputs: `<s>[INST] ${message} [/INST]`,
+        parameters: {
+          max_new_tokens: 1024,
+          temperature: 0.7,
+          top_p: 0.95,
+        },
       },
       {
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          Authorization: `Bearer ${HUGGING_FACE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
       }
     );
 
-    if (ollamaResponse.data && ollamaResponse.data.response) {
-      res.json({ reply: ollamaResponse.data.response });
+    if (response.data && response.data[0].generated_text) {
+      // Clean up the response by removing the instruction format
+      const cleanResponse = response.data[0].generated_text
+        .replace(/<s>\[INST\].*?\[\/INST\]\s*/, "")
+        .trim();
+      res.json({ reply: cleanResponse });
     } else {
-      res.status(500).json({ error: "Invalid response from Ollama" });
+      res.status(500).json({ error: "Invalid response from AI model" });
     }
   } catch (error) {
-    console.error("Ollama API Error:", error.message);
-    res
-      .status(500)
-      .json({ error: "Failed to generate a response from Ollama" });
+    console.error("AI API Error:", error.message);
+    res.status(500).json({ error: "Failed to generate a response" });
   }
 });
 
@@ -145,6 +159,7 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(3000, () => {
-  console.log("Server is running on port 3000");
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });

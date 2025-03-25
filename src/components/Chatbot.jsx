@@ -68,7 +68,7 @@ const Chatbot = () => {
       {/* Chatbot Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-600 transition-all duration-300 transform hover:scale-110"
+        className="fixed bottom-6 right-4 md:right-6 w-12 md:w-16 h-12 md:h-16 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-all duration-300 transform hover:scale-110 flex items-center justify-center"
         title="Chat with AI Assistant"
       >
         {isOpen ? '✕' : '💬'}
@@ -76,15 +76,15 @@ const Chatbot = () => {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-96 bg-white border rounded-lg shadow-xl p-4 transition-all duration-300 transform">
+        <div className="fixed bottom-20 md:bottom-24 right-2 md:right-6 w-[95vw] md:w-96 bg-white border rounded-lg shadow-xl p-4 transition-all duration-300 transform max-h-[80vh] md:max-h-[600px] flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-800">AI Assistant</h3>
+            <h3 className="text-lg font-semibold text-gray-800">DocQueue Chatbot</h3>
             <span className="text-xs text-gray-500">Powered by huggingface</span>
           </div>
           
           <div 
             ref={chatContainerRef}
-            className="h-[400px] overflow-y-auto border rounded-lg p-4 mb-4 bg-gray-50"
+            className="flex-1 overflow-y-auto border rounded-lg p-4 mb-4 bg-gray-50"
           >
             {chat.length === 0 ? (
               <div className="text-center text-gray-500 mt-4">
@@ -95,7 +95,7 @@ const Chatbot = () => {
               chat.map((msg, index) => (
                 <div 
                   key={index} 
-                  className={`mb-4 ${msg.sender === "You" ? "ml-auto" : "mr-auto"} max-w-[80%]`}
+                  className={`mb-4 ${msg.sender === "You" ? "ml-auto" : "mr-auto"} max-w-[85%]`}
                 >
                   <div 
                     className={`rounded-lg p-3 ${
@@ -104,7 +104,7 @@ const Chatbot = () => {
                         : "bg-white border border-gray-200"
                     }`}
                   >
-                    <div className="text-sm">{msg.text}</div>
+                    <div className="text-sm break-words">{msg.text}</div>
                   </div>
                   <div 
                     className={`text-xs text-gray-500 mt-1 ${
@@ -125,7 +125,7 @@ const Chatbot = () => {
             )}
           </div>
           
-          <div className="relative">
+          <div className="relative mt-auto">
             <input
               type="text"
               value={message}

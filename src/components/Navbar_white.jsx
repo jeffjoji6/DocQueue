@@ -23,8 +23,18 @@ const Navbar_white = () => {
             <Link to="/aboutus" className="text-gray-700 hover:text-blue-600 transition">
               About us
             </Link>
-            <Link to="/emergency" className="text-red-600 hover:text-red-700 transition animate-pulse">
-              Emergency
+            <Link to="/emergency" className="relative group">
+              <button className="px-6 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-full 
+                               hover:from-red-600 hover:to-red-700 transition-all transform hover:scale-105 
+                               shadow-lg hover:shadow-red-500/50 flex items-center gap-2 animate-pulse">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                        d="M15.58,12a3.58,3.58,0,1,1-3.58-3.58A3.58,3.58,0,0,1,15.58,12Z M12,2V4.36 M12,19.64V22 M4.36,12H2 M22,12H19.64 M6.24,6.24L8,8 M18,18l-1.76-1.76 M6.24,17.76L8,16 M18,6l-1.76,1.76">
+                  </path>
+                </svg>
+                Emergency
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping"></span>
+              </button>
             </Link>
           </div>
 
@@ -67,10 +77,18 @@ const Navbar_white = () => {
               </Link>
               <Link
                 to="/emergency"
-                className="block px-3 py-2 rounded-md text-red-600 hover:text-red-700 hover:bg-gray-50 transition animate-pulse"
+                className="block px-3 py-2 rounded-md hover:bg-red-50 transition"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Emergency
+                <div className="flex items-center gap-2 text-red-600">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                          d="M15.58,12a3.58,3.58,0,1,1-3.58-3.58A3.58,3.58,0,0,1,15.58,12Z M12,2V4.36 M12,19.64V22 M4.36,12H2 M22,12H19.64 M6.24,6.24L8,8 M18,18l-1.76-1.76 M6.24,17.76L8,16 M18,6l-1.76,1.76">
+                    </path>
+                  </svg>
+                  <span className="font-medium">Emergency</span>
+                  <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                </div>
               </Link>
             </div>
           </div>

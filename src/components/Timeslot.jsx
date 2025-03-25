@@ -44,7 +44,10 @@ const Timeslot = () => {
     );
 
   return (
-    <div className="min-h-screen pt-20 bg-gradient-to-b from-blue-50 via-white to-blue-50 px-4 md:px-6" id="bck">
+    <div
+      className="min-h-screen pt-20 bg-gradient-to-b from-blue-50 via-white to-blue-50 px-4 md:px-6"
+      id="bck"
+    >
       <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-6 mt-8">
         <h2 className="text-3xl font-bold text-center mb-10 text-blue-600">
           My Appointments
@@ -86,11 +89,9 @@ const Timeslot = () => {
           </ul>
         ) : (
           <div className="text-center py-10">
-            <p className="text-gray-600 text-lg mb-6">
-              No appointments found.
-            </p>
-            <a 
-              href="/hospitallist" 
+            <p className="text-gray-600 text-lg mb-6">No appointments found.</p>
+            <a
+              href="/hospitallist"
               className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md"
             >
               Book an Appointment

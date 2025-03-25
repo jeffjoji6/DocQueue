@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import AssessmentPopup from "./AssessmentPopup";
 
 const Quiz = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -223,7 +224,18 @@ const Quiz = () => {
       // Calculate final score when quiz is complete
       const finalScore = Math.round((score / questions.length) * 10);
       setScore(finalScore);
-      setShowScore(true);
+
+      // Calculate severity based on score
+      const severity =
+        finalScore > 5 ? "High" : finalScore > 4 ? "Medium" : "Low";
+
+      // Set assessment data and show popup
+      setAssessmentData({
+        score: finalScore,
+        disease,
+        severity,
+      });
+      setShowPopup(true);
     }
   };
 
@@ -301,6 +313,19 @@ const Quiz = () => {
     setSelectedOption(null);
     setShowScore(false);
     setQuizComplete(false);
+  };
+
+  const [showPopup, setShowPopup] = useState(false);
+  const [assessmentData, setAssessmentData] = useState(null);
+
+  const handleProceed = () => {
+    if (score > 5) {
+      navigate("/emergency");
+    } else if (score > 4) {
+      navigate("/appointments");
+    } else {
+      navigate("/ai-doctor");
+    }
   };
 
   if (quizComplete) {
@@ -498,6 +523,17 @@ const Quiz = () => {
           )}
         </div>
       </div>
+
+      {assessmentData && (
+        <AssessmentPopup
+          isOpen={showPopup}
+          onClose={() => setShowPopup(false)}
+          score={assessmentData.score}
+          disease={assessmentData.disease}
+          severity={assessmentData.severity}
+          onProceed={handleProceed}
+        />
+      )}
     </div>
   );
 };

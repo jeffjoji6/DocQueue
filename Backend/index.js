@@ -7,6 +7,7 @@ const axios = require("axios");
 const session = require("express-session");
 require("dotenv").config();
 const { generateResponse } = require('./services/aiDoctor');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 app.use(cors());
@@ -103,27 +104,23 @@ app.post("/appointments", async (req, res) => {
 });
 
 // AI Doctor endpoint
-app.post('/api/ai-doctor/chat', async (req, res) => {
+app.post('/api/ai-doctor', async (req, res) => {
   try {
     const { message, disease, score } = req.body;
-    
     if (!message || !disease) {
-      return res.status(400).json({ 
-        error: 'Missing required fields',
-        message: 'Please provide both message and disease information'
-      });
+      return res.status(400).json({ error: 'Message and disease are required' });
     }
 
     const response = await generateResponse(message, disease, score);
     res.json({ response });
   } catch (error) {
-    console.error('Error in AI doctor endpoint:', error);
-    res.status(500).json({ 
-      error: 'Failed to process request',
-      message: 'An error occurred while processing your request. Please try again.'
-    });
+    console.error('Error in AI Doctor endpoint:', error);
+    res.status(500).json({ error: 'An error occurred while processing your request' });
   }
 });
+
+// Admin routes
+app.use('/api/admin', adminRoutes);
 
 const server = http.createServer(app);
 const io = socketIo(server, {
@@ -244,7 +241,7 @@ app.get("/appointments/slot", async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

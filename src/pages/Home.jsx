@@ -20,7 +20,7 @@ const Home = () => {
       name: "Sreenethra Eye Care",
       type: "Multi-speciality Hospital",
       image: hospic,
-      rating: 4.8,
+     
       reviews: 128,
       location: "Chennai",
       specialties: ["Ophthalmology", "General Medicine"]

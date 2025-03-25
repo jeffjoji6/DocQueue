@@ -11,7 +11,6 @@ const HospitalList = () => {
       name: "Sreenethra Eye Care",
       type: "Multi-speciality Hospital",
       image: "https://img.freepik.com/free-photo/hospital-building-modern-parking-lot_1127-3478.jpg",
-      reviews: 128,
       location: "Chennai",
       specialties: ["Ophthalmology", "General Medicine"],
       waitTime: "15 mins",
@@ -22,7 +21,6 @@ const HospitalList = () => {
       name: "Apollo Hospitals",
       type: "Multi-speciality Hospital",
       image: "https://img.freepik.com/free-photo/modern-hospital-building_1127-3482.jpg",
-      reviews: 256,
       location: "Chennai",
       specialties: ["Cardiology", "Neurology", "Orthopedics"],
       waitTime: "30 mins",
@@ -33,7 +31,6 @@ const HospitalList = () => {
       name: "City Care Hospital",
       type: "General Hospital",
       image: "https://img.freepik.com/free-photo/hospital-building-with-emergency-sign_1127-3480.jpg",
-      reviews: 98,
       location: "Chennai",
       specialties: ["General Medicine", "Pediatrics"],
       waitTime: "20 mins",
@@ -44,7 +41,6 @@ const HospitalList = () => {
       name: "Dental Excellence",
       type: "Dental Clinic",
       image: "https://img.freepik.com/free-photo/medical-clinic-exterior_1127-3485.jpg",
-      reviews: 75,
       location: "Chennai",
       specialties: ["Dentistry", "Oral Surgery"],
       waitTime: "10 mins",
@@ -148,8 +144,6 @@ const HospitalList = () => {
                             d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                     <span className="text-gray-600 text-sm">{hospital.location}</span>
-                    <span className="text-gray-400">•</span>
-                    <span className="text-gray-600 text-sm">{hospital.reviews} reviews</span>
                   </div>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {hospital.specialties.map((specialty, index) => (

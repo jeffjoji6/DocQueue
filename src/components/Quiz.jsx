@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Quiz = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -7,18 +7,18 @@ const Quiz = () => {
   const [quizComplete, setQuizComplete] = useState(false);
 
   // For Timeslot booking after the quiz
-  const [doctor, setDoctor] = useState('');
-  const [timeslot, setTimeslot] = useState('');
-  const [date, setDate] = useState('');
-  const [disease, setDisease] = useState(''); // New state for disease
+  const [doctor, setDoctor] = useState("");
+  const [timeslot, setTimeslot] = useState("");
+  const [date, setDate] = useState("");
+  const [disease, setDisease] = useState(""); // New state for disease
 
   const navigate = useNavigate();
   // const [patientName, setPatientName] = useState(""); // New state for patient name
-// const [phoneNumber, setPhoneNumber] = useState(""); // New state for phone number
+  // const [phoneNumber, setPhoneNumber] = useState(""); // New state for phone number
 
   // Sample IDs for patient, hospital, and doctor (replace as needed)
-  const patientId = 1; 
-  const hospitalId = 1; 
+  const patientId = 1;
+  const hospitalId = 1;
   const doctorId = doctor;
 
   // Questions and answers structured like the decision tree
@@ -62,7 +62,8 @@ const Quiz = () => {
       ],
     },
     {
-      question: "Have you had recent contact with someone with similar symptoms?",
+      question:
+        "Have you had recent contact with someone with similar symptoms?",
       options: [
         { text: "Yes", score: 3, next: 7 },
         { text: "No", score: 0, next: 7 },
@@ -188,7 +189,8 @@ const Quiz = () => {
       ],
     },
     {
-      question: "Have you had recent contact with someone with similar symptoms?",
+      question:
+        "Have you had recent contact with someone with similar symptoms?",
       options: [
         { text: "Yes", score: 3, next: null },
         { text: "No", score: 0, next: null },
@@ -206,7 +208,6 @@ const Quiz = () => {
     // Additional questions follow the same format
   ];
 
-
   const handleAnswerClick = (option) => {
     setScore(score + option.score);
 
@@ -222,13 +223,12 @@ const Quiz = () => {
     }
   };
 
-
   const handleBooking = async (e) => {
     e.preventDefault();
 
     // Validate form input
     if (!doctor || !timeslot || !date) {
-      alert('Please select a doctor, date, and time slot.');
+      alert("Please select a doctor, date, and time slot.");
       return;
     }
     // console.log(questions[0].options[currentQuestionIndex]?.text)
@@ -244,27 +244,27 @@ const Quiz = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:3000/appointments', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3001/appointments", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(appointmentData),
       });
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Appointment created:', data);
-        alert('Appointment successfully booked.');
-        navigate('/Confirmed');
+        console.log("Appointment created:", data);
+        alert("Appointment successfully booked.");
+        navigate("/Confirmed");
       } else {
         const error = await response.json();
-        console.error('Failed to create appointment:', error);
-        alert('Failed to book appointment. Please try again.');
+        console.error("Failed to create appointment:", error);
+        alert("Failed to book appointment. Please try again.");
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('An error occurred while booking the appointment.');
+      console.error("Error:", error);
+      alert("An error occurred while booking the appointment.");
     }
   };
 
@@ -275,29 +275,29 @@ const Quiz = () => {
           <div className="mt-6 p-2">
             <h2 className="text-2xl font-bold">Book a Slot for Consultation</h2>
             <form className="mt-4" onSubmit={handleBooking}>
-            <label className="block text-left">
-  Patient Name:
-  <input
-    type="text"
-    className="mt-2 p-2 border border-gray-400 rounded-md w-full"
-    // value={patientName}
-    // onChange={(e) => setPatientName(e.target.value)}
-    placeholder="Enter your name"
-    required
-  />
-</label>
+              <label className="block text-left">
+                Patient Name:
+                <input
+                  type="text"
+                  className="mt-2 p-2 border border-gray-400 rounded-md w-full"
+                  // value={patientName}
+                  // onChange={(e) => setPatientName(e.target.value)}
+                  placeholder="Enter your name"
+                  required
+                />
+              </label>
 
-<label className="block text-left mt-4">
-  Phone Number:
-  <input
-    type="tel"
-    className="mt-2 p-2 border border-gray-400 rounded-md w-full"
-    // value={phoneNumber}
-    // onChange={(e) => setPhoneNumber(e.target.value)}
-    placeholder="Enter your phone number"
-    required
-  />
-</label>
+              <label className="block text-left mt-4">
+                Phone Number:
+                <input
+                  type="tel"
+                  className="mt-2 p-2 border border-gray-400 rounded-md w-full"
+                  // value={phoneNumber}
+                  // onChange={(e) => setPhoneNumber(e.target.value)}
+                  placeholder="Enter your phone number"
+                  required
+                />
+              </label>
               <label className="block text-left pt-2">
                 Select Doctor:
                 <select
@@ -362,24 +362,21 @@ const Quiz = () => {
   return (
     <div className="w-full h-screen flex justify-center">
       <div className="bg-slate-50 w-11/12 mt-12 rounded-md  pt-40">
-      <div className="w-6/12 h-auto shadow-xl mx-auto mt-16 p-6 flex flex-col items-center justify-center rounded-2xl hover:shadow-2xl">
-
+        <div className="w-6/12 h-auto shadow-xl mx-auto mt-16 p-6 flex flex-col items-center justify-center rounded-2xl hover:shadow-2xl">
           <h1 className="text-2xl font-bold text-center align-top">
             {currentQuestion.question}
           </h1>
 
           <hr
             style={{
-              border: 'none',
-              borderTop: '4px solid black',
-              width: '50%',
-              margin: '20px auto',
+              border: "none",
+              borderTop: "4px solid black",
+              width: "50%",
+              margin: "20px auto",
             }}
           />
 
-<div className="grid grid-cols-2 gap-4 pt-5 place-items-center w-full">
-
-
+          <div className="grid grid-cols-2 gap-4 pt-5 place-items-center w-full">
             {currentQuestion.options.map((option, index) => (
               <button
                 key={index}

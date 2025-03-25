@@ -137,12 +137,19 @@ const io = socketIo(server, {
 });
 
 // Socket.io: Listen for ambulance call and simulate dispatch updates
+
+app.get("/api/hospital", (req, res) => {
+  res.json({ lat: 12.975, lng: 77.605, name: "City Hospital" });
+});
+
+// Socket.io: Listen for ambulance call and simulate dispatch updates
 io.on("connection", (socket) => {
   console.log("Client connected:", socket.id);
 
   socket.on("callAmbulance", (data) => {
     console.log("Ambulance requested from:", data);
-    let eta = 10;
+    // Simulate an initial ETA of 10 minutes
+    let eta = 10; 
     const interval = setInterval(() => {
       if (eta > 0) {
         eta--;
@@ -151,12 +158,96 @@ io.on("connection", (socket) => {
         socket.emit("ambulanceUpdate", { eta: 0, status: "Arrived" });
         clearInterval(interval);
       }
-    }, 5000);
+    }, 5000); // For demo: update every 5 seconds
   });
 
   socket.on("disconnect", () => {
     console.log("Client disconnected:", socket.id);
   });
+});
+
+// Example endpoint to retrieve appointments with populated related data
+app.get("/appointments", async (req, res) => {
+  try {
+    const appointments = await Appointment.find()
+      .populate("patientId", "name age") // Fetch specific patient fields
+      .populate("hospitalId", "name location") // Fetch specific hospital fields
+      .populate("doctorId", "name specialty"); // Fetch specific doctor fields
+    res.status(200).send(appointments);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+app.get("/appointments/priority", async (req, res) => {
+  const { hospitalId, selectedTimeSlot } = req.query;
+
+  try {
+    if (!hospitalId || !selectedTimeSlot) {
+      return res.status(400).send({
+        message:
+          "Missing required query parameters: hospitalId and selectedTimeSlot",
+      });
+    }
+
+    const appointments = await Appointment.find({
+      hospitalId,
+      selectedTimeSlot,
+    }).sort({ priorityRating: -1 });
+
+    // Group appointments by doctorId
+    const groupedByDoctor = appointments.reduce((result, appointment) => {
+      const docId = appointment.doctorId;
+      if (!result[docId]) {
+        result[docId] = {
+          doctorId: docId,
+          appointments: [],
+        };
+      }
+      result[docId].appointments.push(appointment);
+      return result;
+    }, {});
+
+    const resultArray = Object.values(groupedByDoctor);
+    res.status(200).send(resultArray);
+  } catch (error) {
+    res.status(500).send({
+      message: "Failed to fetch appointments",
+      error: error.message,
+    });
+  }
+});
+
+app.get("/appointments/slot", async (req, res) => {
+  const { hospitalId, doctorId, selectedTimeSlot } = req.query;
+
+  try {
+    // Validate input parameters
+    if (!hospitalId || !doctorId || !selectedTimeSlot) {
+      return res.status(400).send({
+        message:
+          "Missing required query parameters: hospitalId, doctorId, selectedTimeSlot",
+      });
+    }
+
+    // Find appointments that match the given criteria and sort by priorityRating in descending order
+    const appointments = await Appointment.find({
+      hospitalId,
+      doctorId,
+      selectedTimeSlot,
+    })
+      .sort({ priorityRating: -1 }) // Sort by priorityRating in descending order
+      .populate("patientId", "name age") // Fetch specific fields from Patient collection
+      .populate("hospitalId", "name location") // Fetch specific fields from Hospital collection
+      .populate("doctorId", "name specialty"); // Fetch specific fields from Doctor collection
+
+    res.status(200).send(appointments);
+  } catch (error) {
+    res.status(500).send({
+      message: "Failed to fetch appointments",
+      error: error.message,
+    });
+  }
 });
 
 const PORT = process.env.PORT || 3000;

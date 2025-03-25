@@ -129,7 +129,8 @@ const Emergency = () => {
                     </p>
                     {eta !== null && (
                       <p className="text-lg md:text-xl font-semibold mb-4">
-                        🚑 Estimated Arrival: <span className="font-bold">{eta}</span> minute
+                        🚑 Estimated Arrival:{" "}
+                        <span className="font-bold">{eta}</span> minute
                         {eta !== 1 && "s"}
                       </p>
                     )}

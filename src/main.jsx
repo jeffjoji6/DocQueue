@@ -13,6 +13,8 @@ import AboutUs from "./pages/Aboutus.jsx";
 import AiDoctor from "./pages/AiDoctor.jsx";
 import HospitalList from "./pages/HospitalList.jsx";
 
+import EmergencyAmbulance from "./pages/EmergencyAmbulance.jsx";
+
 const Layout = () => {
   return (
     <>
@@ -29,13 +31,15 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <App /> },
       { path: "/emergency", element: <Emergency /> },
-      { path: "/HospitalDetails", element: <Hospitaldetails /> },
+      { path: "/hospitaldetails/:id", element: <Hospitaldetails /> },
       { path: "/quiz", element: <Quiz /> },
       { path: "/timeslot", element: <Timeslot /> },
-      { path: "/Confirmed", element: <Confirmationpop /> },
-      { path: "/Aboutus", element: <AboutUs /> },
+      { path: "/confirmationpop", element: <Confirmationpop /> },
+      { path: "/aboutus", element: <AboutUs /> },
       { path: "/ai-doctor", element: <AiDoctor /> },
       { path: "/hospitallist", element: <HospitalList /> },
+  
+      { path: "/emergency-ambulance", element: <EmergencyAmbulance /> },
     ],
   },
 ]);

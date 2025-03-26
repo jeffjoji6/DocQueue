@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.0",
     "@huggingface/inference": "^3.6.2",
     "@react-google-maps/api": "^2.20.6",
     "axios": "^1.8.4",

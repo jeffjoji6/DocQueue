@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
+import { ChatBubbleLeftIcon } from "@heroicons/react/24/outline";
 
-const Chatbot = () => {
+const DocQueueChat = () => {
   const [chat, setChat] = useState([]);
   const [message, setMessage] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -17,23 +18,26 @@ const Chatbot = () => {
 
   const getResponse = async (message) => {
     try {
-      const response = await fetch("http://localhost:3001/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message }),
-      });
+      const response = await fetch(
+        "http://localhost:3001/api/docqueue-chat/chat",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
       const data = await response.json();
-      if (!data.reply) {
+      if (!data.response) {
         throw new Error("No response received from server");
       }
-      return data.reply;
+      return data.response;
     } catch (error) {
-      console.error("Chatbot error:", error);
+      console.error("DocQueue chat error:", error);
       return `Error: ${error.message}. Please try again.`;
     }
   };
@@ -48,13 +52,16 @@ const Chatbot = () => {
 
     try {
       const botResponse = await getResponse(userMessage);
-      setChat((prev) => [...prev, { sender: "Bot", text: botResponse }]);
+      setChat((prev) => [
+        ...prev,
+        { sender: "DocQueue Assistant", text: botResponse },
+      ]);
     } catch (error) {
       console.error("Failed to get response:", error);
       setChat((prev) => [
         ...prev,
         {
-          sender: "Bot",
+          sender: "DocQueue Assistant",
           text: "Sorry, I encountered an error. Please try again.",
         },
       ]);
@@ -75,22 +82,23 @@ const Chatbot = () => {
       {/* Chatbot Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-4 md:right-6 w-12 md:w-16 h-12 md:h-16 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-all duration-300 transform hover:scale-110 flex items-center justify-center"
-        title="Chat with AI Assistant"
+        className="fixed bottom-6 right-4 md:right-6 w-12 md:w-16 h-12 md:h-16 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-110 flex items-center justify-center"
+        title="Chat with DocQueue Assistant"
       >
-        {isOpen ? "✕" : "💬"}
+        {isOpen ? "✕" : <ChatBubbleLeftIcon className="h-6 w-6" />}
       </button>
 
       {/* Chat Window */}
       {isOpen && (
         <div className="fixed bottom-20 md:bottom-24 right-2 md:right-6 w-[95vw] md:w-96 bg-white border rounded-lg shadow-xl p-4 transition-all duration-300 transform max-h-[80vh] md:max-h-[600px] flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-800">
-              DocQueue Chatbot
-            </h3>
-            <span className="text-xs text-gray-500">
-              Powered by huggingface
-            </span>
+            <div className="flex items-center space-x-2">
+              <ChatBubbleLeftIcon className="h-6 w-6 text-blue-600" />
+              <h3 className="text-lg font-semibold text-gray-800">
+                DocQueue Assistant
+              </h3>
+            </div>
+            <span className="text-xs text-gray-500">Powered by AI</span>
           </div>
 
           <div
@@ -99,8 +107,15 @@ const Chatbot = () => {
           >
             {chat.length === 0 ? (
               <div className="text-center text-gray-500 mt-4">
-                <p>👋 Hi! I'm your AI assistant.</p>
-                <p className="text-sm mt-2">How can I help you today?</p>
+                <p>👋 Hi! I'm your DocQueue Assistant.</p>
+                <p className="text-sm mt-2">I can help you with:</p>
+                <ul className="text-sm mt-2 text-left list-disc list-inside">
+                  <li>Booking appointments</li>
+                  <li>Understanding our features</li>
+                  <li>General questions about DocQueue</li>
+                  <li>Payment and cancellation policies</li>
+                </ul>
+                <p className="text-sm mt-4">How can I help you today?</p>
               </div>
             ) : (
               chat.map((msg, index) => (
@@ -113,7 +128,7 @@ const Chatbot = () => {
                   <div
                     className={`rounded-lg p-3 ${
                       msg.sender === "You"
-                        ? "bg-blue-500 text-white ml-auto"
+                        ? "bg-blue-600 text-white ml-auto"
                         : "bg-white border border-gray-200"
                     }`}
                   >
@@ -144,7 +159,7 @@ const Chatbot = () => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Type your message..."
+              placeholder="Ask about DocQueue..."
               className="w-full border rounded-lg pl-4 pr-12 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               disabled={isLoading}
             />
@@ -154,7 +169,7 @@ const Chatbot = () => {
               className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-3 py-1 rounded-md transition-all duration-200 ${
                 isLoading || message.trim() === ""
                   ? "bg-gray-300 cursor-not-allowed"
-                  : "bg-blue-500 hover:bg-blue-600 text-white"
+                  : "bg-blue-600 hover:bg-blue-700 text-white"
               }`}
             >
               {isLoading ? (
@@ -172,4 +187,4 @@ const Chatbot = () => {
   );
 };
 
-export default Chatbot;
+export default DocQueueChat;

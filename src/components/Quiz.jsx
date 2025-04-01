@@ -324,7 +324,13 @@ const Quiz = () => {
     } else if (score > 4) {
       navigate("/appointments");
     } else {
-      navigate("/ai-doctor");
+      navigate("/ai-doctor", {
+        state: {
+          priority: "low",
+          score: score,
+          disease: disease,
+        },
+      });
     }
   };
 

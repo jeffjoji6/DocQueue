@@ -8,6 +8,7 @@ const session = require("express-session");
 require("dotenv").config();
 const { generateResponse } = require('./services/aiDoctor');
 const adminRoutes = require('./routes/admin');
+const docQueueChatRoutes = require('./routes/docQueueChat');
 
 const app = express();
 app.use(cors());
@@ -107,9 +108,9 @@ app.post("/appointments", async (req, res) => {
 app.post('/api/ai-doctor', async (req, res) => {
   try {
     const { message, disease, score } = req.body;
-    if (!message || !disease) {
-      return res.status(400).json({ error: 'Message and disease are required' });
-    }
+    // if (!message || !disease) {
+    //   return res.status(400).json({ error: 'Message and disease are required' });
+    // }
 
     const response = await generateResponse(message, disease, score);
     res.json({ response });
@@ -121,6 +122,7 @@ app.post('/api/ai-doctor', async (req, res) => {
 
 // Admin routes
 app.use('/api/admin', adminRoutes);
+app.use('/api/docqueue-chat', docQueueChatRoutes);
 
 const server = http.createServer(app);
 const io = socketIo(server, {

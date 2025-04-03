@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import logo from '../assets/logo.png';
+import logo from "../assets/logo.png";
 import {
   HomeIcon,
   UsersIcon,
@@ -8,6 +8,7 @@ import {
   ExclamationTriangleIcon,
   Bars3Icon,
   XMarkIcon,
+  ChartBarIcon,
 } from "@heroicons/react/24/outline";
 import { Link, useLocation } from "react-router-dom";
 
@@ -19,6 +20,11 @@ const navigation = [
     name: "Emergency Cases",
     href: "/emergency",
     icon: ExclamationTriangleIcon,
+  },
+  {
+    name: "Analytics",
+    href: "/analytics",
+    icon: ChartBarIcon,
   },
 ];
 
@@ -65,9 +71,6 @@ export default function Layout({ children }) {
                       src={logo}
                       alt="Hospital Logo"
                     />
-                    <span className="ml-2 text-xl font-semibold">
-                      Hospital Admin
-                    </span>
                   </div>
                   <nav className="flex flex-1 flex-col">
                     <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -113,12 +116,8 @@ export default function Layout({ children }) {
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
         <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
           <div className="flex h-16 shrink-0 items-center">
-            <img
-              className="h-8 w-auto"
-              src={logo}
-              alt="Hospital Logo"
-            />
-            <span className="ml-2 text-xl font-semibold">Hospital Admin</span>
+            <img className="h-8 w-auto" src={logo} alt="Hospital Logo" />
+            {/* <span className="ml-2 text-xl font-semibold">Hospital Admin</span> */}
           </div>
           <nav className="flex flex-1 flex-col">
             <ul role="list" className="flex flex-1 flex-col gap-y-7">

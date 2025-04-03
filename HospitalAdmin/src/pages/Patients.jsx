@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import PatientDetailsModal from "../components/PatientDetailsModal";
 
 export default function Patients() {
-  const [patients, setPatients] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedPatient, setSelectedPatient] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    const fetchPatients = async () => {
+    const fetchAppointments = async () => {
       try {
-        const response = await axios.get("/api/admin/patients");
-        setPatients(Array.isArray(response.data) ? response.data : []);
+        const response = await fetch("http://localhost:3001/appointments");
+        const data = await response.json();
+        setAppointments(data);
+        setLoading(false);
       } catch (err) {
-        setError("Failed to fetch patients data");
-        console.error("Error fetching patients:", err);
-        setPatients([]);
-      } finally {
+        setError("Failed to fetch patient data");
+        console.error("Error fetching appointments:", err);
         setLoading(false);
       }
     };
 
-    fetchPatients();
+    fetchAppointments();
   }, []);
 
   if (loading) {
@@ -30,6 +32,35 @@ export default function Patients() {
   if (error) {
     return <div className="text-center py-12 text-red-600">{error}</div>;
   }
+
+  // Get unique patients and their latest appointments
+  const uniquePatients = appointments.reduce((acc, appointment) => {
+    if (!acc[appointment.patientId]) {
+      acc[appointment.patientId] = {
+        id: appointment.patientId,
+        latestAppointment: appointment,
+        totalAppointments: 1,
+        diseases: new Set([appointment.disease]),
+      };
+    } else {
+      acc[appointment.patientId].totalAppointments++;
+      acc[appointment.patientId].diseases.add(appointment.disease);
+      if (
+        new Date(appointment.date) >
+        new Date(acc[appointment.patientId].latestAppointment.date)
+      ) {
+        acc[appointment.patientId].latestAppointment = appointment;
+      }
+    }
+    return acc;
+  }, {});
+
+  const patientsList = Object.values(uniquePatients);
+
+  const handleViewDetails = (patient) => {
+    setSelectedPatient(patient.latestAppointment);
+    setIsModalOpen(true);
+  };
 
   return (
     <div>
@@ -61,25 +92,25 @@ export default function Patients() {
                       scope="col"
                       className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
                     >
-                      Name
+                      Patient ID
                     </th>
                     <th
                       scope="col"
                       className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                     >
-                      ID
+                      Latest Condition
                     </th>
                     <th
                       scope="col"
                       className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                     >
-                      Age
+                      Total Appointments
                     </th>
                     <th
                       scope="col"
                       className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                     >
-                      Condition
+                      Latest Priority
                     </th>
                     <th
                       scope="col"
@@ -96,35 +127,38 @@ export default function Patients() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {patients.map((patient) => (
+                  {patientsList.map((patient) => (
                     <tr key={patient.id}>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                        {patient.name}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         {patient.id}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {patient.age}
+                        {patient.latestAppointment.disease}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {patient.condition}
+                        {patient.totalAppointments}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        {patient.latestAppointment.priorityRating}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         <span
                           className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
-                            patient.status === "Active"
+                            patient.latestAppointment.status === "scheduled"
                               ? "bg-green-100 text-green-800"
-                              : patient.status === "Pending"
+                              : patient.latestAppointment.status === "pending"
                               ? "bg-yellow-100 text-yellow-800"
                               : "bg-red-100 text-red-800"
                           }`}
                         >
-                          {patient.status}
+                          {patient.latestAppointment.status}
                         </span>
                       </td>
                       <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                        <button className="text-blue-600 hover:text-blue-900 mr-3">
+                        <button
+                          onClick={() => handleViewDetails(patient)}
+                          className="text-blue-600 hover:text-blue-900 mr-3"
+                        >
                           View
                         </button>
                         <button className="text-blue-600 hover:text-blue-900">
@@ -139,6 +173,14 @@ export default function Patients() {
           </div>
         </div>
       </div>
+
+      {selectedPatient && (
+        <PatientDetailsModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          patientData={selectedPatient}
+        />
+      )}
     </div>
   );
 }

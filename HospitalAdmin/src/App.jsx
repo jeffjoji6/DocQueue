@@ -4,6 +4,7 @@ import Dashboard from "./pages/Dashboard";
 import Patients from "./pages/Patients";
 import Appointments from "./pages/Appointments";
 import Emergency from "./pages/Emergency";
+import Analytics from "./components/Analytics";
 import Layout from "./components/Layout";
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
           <Route path="/patients" element={<Patients />} />
           <Route path="/appointments" element={<Appointments />} />
           <Route path="/emergency" element={<Emergency />} />
+          <Route path="/analytics" element={<Analytics />} />
         </Routes>
       </Layout>
     </Router>

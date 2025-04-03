@@ -1,26 +1,30 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import PatientDetailsModal from "../components/PatientDetailsModal";
+import CreateAppointmentModal from "../components/CreateAppointmentModal";
 
 export default function Appointments() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedPatient, setSelectedPatient] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  const fetchAppointments = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/appointments");
+      const data = await response.json();
+      setAppointments(data);
+      setLoading(false);
+    } catch (err) {
+      setError("Failed to fetch appointments");
+      console.error("Error fetching appointments:", err);
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchAppointments = async () => {
-      try {
-        const response = await axios.get("/api/admin/appointments");
-        setAppointments(Array.isArray(response.data) ? response.data : []);
-      } catch (err) {
-        setError("Failed to fetch appointments");
-        console.error("Error fetching appointments:", err);
-        setAppointments([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchAppointments();
   }, [selectedDate]);
 
@@ -31,6 +35,21 @@ export default function Appointments() {
   if (error) {
     return <div className="text-center py-12 text-red-600">{error}</div>;
   }
+
+  // Filter appointments for the selected date
+  const filteredAppointments = appointments.filter((appointment) => {
+    const appointmentDate = new Date(appointment.date);
+    return appointmentDate.toDateString() === selectedDate.toDateString();
+  });
+
+  const handleViewDetails = (appointment) => {
+    setSelectedPatient(appointment);
+    setIsModalOpen(true);
+  };
+
+  const handleAppointmentCreated = (newAppointment) => {
+    setAppointments((prev) => [...prev, newAppointment]);
+  };
 
   return (
     <div>
@@ -44,6 +63,7 @@ export default function Appointments() {
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
           <button
             type="button"
+            onClick={() => setIsCreateModalOpen(true)}
             className="block rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
           >
             Schedule appointment
@@ -63,44 +83,50 @@ export default function Appointments() {
           </div>
           <div className="border-t border-gray-200">
             <ul role="list" className="divide-y divide-gray-200">
-              {appointments.length === 0 ? (
+              {filteredAppointments.length === 0 ? (
                 <li className="px-4 py-4 sm:px-6 text-center text-gray-500">
-                  No appointments found
+                  No appointments found for this date
                 </li>
               ) : (
-                appointments.map((appointment) => (
-                  <li key={appointment.id} className="px-4 py-4 sm:px-6">
+                filteredAppointments.map((appointment) => (
+                  <li key={appointment._id} className="px-4 py-4 sm:px-6">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <div className="flex-shrink-0">
                           <div className="h-10 w-10 rounded-full bg-gray-400 flex items-center justify-center">
                             <span className="text-white font-medium">
-                              {appointment.patientName.charAt(0)}
+                              {appointment.patientId}
                             </span>
                           </div>
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
-                            {appointment.patientName}
+                            Patient ID: {appointment.patientId}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {appointment.time}
+                            Time: {appointment.selectedTimeSlot}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            Disease: {appointment.disease}
                           </div>
                         </div>
                       </div>
                       <div className="flex items-center space-x-4">
                         <span
                           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            appointment.status === "Confirmed"
+                            appointment.priorityRating <= 5
                               ? "bg-green-100 text-green-800"
-                              : appointment.status === "Pending"
+                              : appointment.priorityRating <= 10
                               ? "bg-yellow-100 text-yellow-800"
                               : "bg-red-100 text-red-800"
                           }`}
                         >
-                          {appointment.status}
+                          Priority: {appointment.priorityRating}
                         </span>
-                        <button className="text-blue-600 hover:text-blue-900">
+                        <button
+                          onClick={() => handleViewDetails(appointment)}
+                          className="text-blue-600 hover:text-blue-900"
+                        >
                           View Details
                         </button>
                         <button className="text-blue-600 hover:text-blue-900">
@@ -115,6 +141,20 @@ export default function Appointments() {
           </div>
         </div>
       </div>
+
+      {selectedPatient && (
+        <PatientDetailsModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          patientData={selectedPatient}
+        />
+      )}
+
+      <CreateAppointmentModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onAppointmentCreated={handleAppointmentCreated}
+      />
     </div>
   );
 }

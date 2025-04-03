@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AmbulanceMap from "../components/AmbulanceMap";
-import Footer from '../components/Footer';
+import Footer from "../components/Footer";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Emergency = () => {
   const [isAmbulanceCalled, setIsAmbulanceCalled] = useState(false);
@@ -10,6 +11,10 @@ const Emergency = () => {
   const [ambulanceStatus, setAmbulanceStatus] = useState("Idle");
   const [eta, setEta] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [urgentAppointmentBooked, setUrgentAppointmentBooked] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { priority, score, disease } = location.state || {};
 
   // Get user's location when ambulance is called
   useEffect(() => {
@@ -66,22 +71,83 @@ const Emergency = () => {
     }
   }, [routeDetails]);
 
-  const handleCallAmbulance = () => {
+  const handleCallAmbulance = async () => {
     setIsAmbulanceCalled(true);
+
+    // Book urgent appointment
+    try {
+      const currentTime = new Date();
+      const currentHour = currentTime.getHours();
+
+      // Find the next available time slot
+      let selectedTimeSlot;
+      if (currentHour < 9) selectedTimeSlot = "09-10";
+      else if (currentHour < 10) selectedTimeSlot = "10-11";
+      else if (currentHour < 11) selectedTimeSlot = "11-12";
+      else if (currentHour < 12) selectedTimeSlot = "12-13";
+      else if (currentHour < 13) selectedTimeSlot = "13-14";
+      else if (currentHour < 14) selectedTimeSlot = "14-15";
+      else if (currentHour < 15) selectedTimeSlot = "15-16";
+      else selectedTimeSlot = "16-17";
+
+      const appointmentData = {
+        patientId: 1, // Replace with actual patient ID
+        hospitalId: 1, // Replace with actual hospital ID
+        doctorId: 1, // Replace with actual doctor ID
+        selectedTimeSlot,
+        priorityRating: score || 10, // Highest priority for emergency
+        date: currentTime.toISOString(),
+        disease: disease || "Emergency",
+        status: "scheduled",
+      };
+
+      const response = await fetch("http://localhost:3001/appointments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(appointmentData),
+      });
+
+      if (response.ok) {
+        setUrgentAppointmentBooked(true);
+        console.log("Urgent appointment booked successfully");
+      } else {
+        console.error("Failed to book urgent appointment");
+      }
+    } catch (error) {
+      console.error("Error booking urgent appointment:", error);
+    }
   };
 
   const emergencyContacts = [
     { name: "Ambulance", number: "108", icon: "🚑" },
     { name: "Police", number: "100", icon: "👮" },
     { name: "Fire", number: "101", icon: "🔥" },
-    { name: "Doctor Helpline", number: "+91 9124125655", icon: "👨‍⚕️" }
+    { name: "Doctor Helpline", number: "+91 9124125655", icon: "👨‍⚕️" },
   ];
 
   const emergencyTips = [
-    { title: "CPR Steps", content: "30 chest compressions followed by 2 rescue breaths", icon: "❤️" },
-    { title: "Choking", content: "Apply the Heimlich maneuver with abdominal thrusts", icon: "🫁" },
-    { title: "Bleeding", content: "Apply direct pressure with clean cloth or bandage", icon: "🩸" },
-    { title: "Burns", content: "Cool with running water for 10-15 minutes", icon: "🔥" }
+    {
+      title: "CPR Steps",
+      content: "30 chest compressions followed by 2 rescue breaths",
+      icon: "❤️",
+    },
+    {
+      title: "Choking",
+      content: "Apply the Heimlich maneuver with abdominal thrusts",
+      icon: "🫁",
+    },
+    {
+      title: "Bleeding",
+      content: "Apply direct pressure with clean cloth or bandage",
+      icon: "🩸",
+    },
+    {
+      title: "Burns",
+      content: "Cool with running water for 10-15 minutes",
+      icon: "🔥",
+    },
   ];
 
   return (
@@ -121,9 +187,25 @@ const Emergency = () => {
                 </div>
                 {loading && (
                   <p className="text-lg text-gray-600 animate-pulse flex items-center gap-2">
-                    <svg className="animate-spin h-5 w-5 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <svg
+                      className="animate-spin h-5 w-5 text-red-600"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
                     </svg>
                     Fetching your location...
                   </p>
@@ -133,20 +215,33 @@ const Emergency = () => {
               {/* Emergency Contacts Section */}
               <div className="bg-white rounded-2xl shadow-xl p-6 mb-8 border border-red-100">
                 <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                  <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                  <svg
+                    className="w-6 h-6 text-red-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                    ></path>
                   </svg>
                   Emergency Contacts
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                   {emergencyContacts.map((contact, index) => (
-                    <a 
+                    <a
                       key={index}
-                      href={`tel:${contact.number}`} 
+                      href={`tel:${contact.number}`}
                       className="flex flex-col items-center justify-center p-4 bg-red-50 hover:bg-red-100 transition-colors rounded-xl border border-red-200"
                     >
                       <span className="text-3xl mb-2">{contact.icon}</span>
-                      <h3 className="font-semibold text-gray-800">{contact.name}</h3>
+                      <h3 className="font-semibold text-gray-800">
+                        {contact.name}
+                      </h3>
                       <p className="font-bold text-red-600">{contact.number}</p>
                     </a>
                   ))}
@@ -156,20 +251,33 @@ const Emergency = () => {
               {/* Emergency Tips Section */}
               <div className="bg-white rounded-2xl shadow-xl p-6 border border-red-100">
                 <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                  <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  <svg
+                    className="w-6 h-6 text-red-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
                   </svg>
                   First Aid Tips
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                   {emergencyTips.map((tip, index) => (
-                    <div 
+                    <div
                       key={index}
                       className="p-4 bg-blue-50 rounded-xl border border-blue-200"
                     >
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-2xl">{tip.icon}</span>
-                        <h3 className="font-semibold text-gray-800">{tip.title}</h3>
+                        <h3 className="font-semibold text-gray-800">
+                          {tip.title}
+                        </h3>
                       </div>
                       <p className="text-sm text-gray-600">{tip.content}</p>
                     </div>
@@ -185,9 +293,25 @@ const Emergency = () => {
                   <div className="bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-red-200">
                     <div className="bg-red-600 text-white p-4">
                       <h2 className="text-xl font-bold flex items-center gap-2">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                          ></path>
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          ></path>
                         </svg>
                         Ambulance Route
                       </h2>
@@ -205,29 +329,66 @@ const Emergency = () => {
                   {routeDetails && (
                     <div className="bg-white rounded-xl shadow-xl p-6 border-2 border-red-200">
                       <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        <svg
+                          className="w-5 h-5 text-red-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                          ></path>
                         </svg>
                         Route Information
                       </h2>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="bg-gray-50 p-4 rounded-lg flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                            <svg
+                              className="w-5 h-5 text-blue-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+                              ></path>
                             </svg>
                             <span className="font-semibold">Distance:</span>
                           </div>
-                          <span className="text-xl font-bold text-blue-700">{(routeDetails.totalDistance / 1000).toFixed(2)} km</span>
+                          <span className="text-xl font-bold text-blue-700">
+                            {(routeDetails.totalDistance / 1000).toFixed(2)} km
+                          </span>
                         </div>
                         <div className="bg-gray-50 p-4 rounded-lg flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            <svg
+                              className="w-5 h-5 text-red-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                              ></path>
                             </svg>
                             <span className="font-semibold">Time:</span>
                           </div>
-                          <span className="text-xl font-bold text-red-700">{Math.ceil(routeDetails.totalTime / 60)} minutes</span>
+                          <span className="text-xl font-bold text-red-700">
+                            {Math.ceil(routeDetails.totalTime / 60)} minutes
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -243,21 +404,30 @@ const Emergency = () => {
                           <div className="absolute inset-[15%] border-4 border-white opacity-40 rounded-full animate-ping animation-delay-300"></div>
                           <div className="absolute inset-[30%] border-4 border-white opacity-60 rounded-full animate-ping animation-delay-600"></div>
                         </div>
-                        
+
                         {/* Content */}
                         <div className="relative z-10">
                           <div className="flex justify-center mb-4">
                             <span className="text-5xl animate-pulse">🚑</span>
                           </div>
                           <p className="text-2xl md:text-3xl font-extrabold mb-4 uppercase">
-                            {ambulanceStatus === "Ambulance Dispatched" && "🚨 Ambulance Dispatched 🚨"}
-                            {ambulanceStatus === "Ambulance En Route" && "🚨 Ambulance En Route 🚨"}
-                            {ambulanceStatus === "Ambulance Arrived" && "🚨 Ambulance Arrived 🚨"}
+                            {ambulanceStatus === "Ambulance Dispatched" &&
+                              "🚨 Ambulance Dispatched 🚨"}
+                            {ambulanceStatus === "Ambulance En Route" &&
+                              "🚨 Ambulance En Route 🚨"}
+                            {ambulanceStatus === "Ambulance Arrived" &&
+                              "🚨 Ambulance Arrived 🚨"}
                           </p>
                           {eta !== null && (
                             <p className="text-lg md:text-xl font-semibold mb-6 bg-red-700/50 inline-block px-4 py-2 rounded-full">
-                              Estimated Arrival: <span className="font-bold">{eta}</span> minute
+                              Estimated Arrival:{" "}
+                              <span className="font-bold">{eta}</span> minute
                               {eta !== 1 && "s"}
+                            </p>
+                          )}
+                          {urgentAppointmentBooked && (
+                            <p className="text-lg md:text-xl font-semibold mb-6 bg-green-700/50 inline-block px-4 py-2 rounded-full">
+                              ✅ Urgent Appointment Booked
                             </p>
                           )}
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
@@ -265,8 +435,19 @@ const Emergency = () => {
                               href="tel:+919124125655"
                               className="flex items-center justify-center gap-2 bg-white text-red-600 font-bold py-3 rounded-lg hover:bg-red-50 transition-colors"
                             >
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                              <svg
+                                className="w-5 h-5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                                ></path>
                               </svg>
                               Call Emergency
                             </a>
@@ -274,8 +455,19 @@ const Emergency = () => {
                               href="#"
                               className="flex items-center justify-center gap-2 bg-white/20 text-white font-bold py-3 rounded-lg hover:bg-white/30 transition-colors"
                             >
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
+                              <svg
+                                className="w-5 h-5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+                                ></path>
                               </svg>
                               Send Medical Info
                             </a>

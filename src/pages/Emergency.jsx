@@ -5,7 +5,8 @@ import Footer from '../components/Footer';
 const Emergency = () => {
   const [isAmbulanceCalled, setIsAmbulanceCalled] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
-  const [hospitalLocation, setHospitalLocation] = useState(null);
+  const [nearbyHospitals, setNearbyHospitals] = useState([]);
+  const [selectedHospital, setSelectedHospital] = useState(null);
   const [routeDetails, setRouteDetails] = useState(null);
   const [ambulanceStatus, setAmbulanceStatus] = useState("Idle");
   const [eta, setEta] = useState(null);
@@ -17,10 +18,12 @@ const Emergency = () => {
       setLoading(true);
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setUserLocation({
+          const location = {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
-          });
+          };
+          setUserLocation(location);
+          fetchNearbyHospitals(location);
           setLoading(false);
         },
         (error) => {
@@ -33,15 +36,74 @@ const Emergency = () => {
     }
   }, [isAmbulanceCalled]);
 
-  // Fetch hospital location once user location is set
-  useEffect(() => {
-    if (userLocation) {
-      fetch("http://localhost:3001/api/hospital")
-        .then((res) => res.json())
-        .then((data) => setHospitalLocation(data))
-        .catch((err) => console.error(err));
+  const fetchNearbyHospitals = async (location) => {
+    try {
+      // Mock data for testing
+      const mockHospitals = [
+        {
+          _id: "1",
+          name: "City General Hospital",
+          address: "123 Main St, City",
+          contact: "+91 1234567890",
+          latitude: location.lat + 0.01,
+          longitude: location.lng + 0.01
+        },
+        {
+          _id: "2",
+          name: "Metro Medical Center",
+          address: "456 Park Ave, City",
+          contact: "+91 9876543210",
+          latitude: location.lat - 0.01,
+          longitude: location.lng - 0.01
+        },
+        {
+          _id: "3",
+          name: "Community Health Hospital",
+          address: "789 Oak St, City",
+          contact: "+91 5555555555",
+          latitude: location.lat + 0.02,
+          longitude: location.lng - 0.02
+        }
+      ];
+      
+      // Calculate distance for each hospital and sort by distance
+      const hospitalsWithDistance = mockHospitals.map(hospital => ({
+        ...hospital,
+        distance: calculateDistance(
+          location.lat,
+          location.lng,
+          hospital.latitude,
+          hospital.longitude
+        )
+      })).sort((a, b) => a.distance - b.distance);
+
+      setNearbyHospitals(hospitalsWithDistance);
+      if (hospitalsWithDistance.length > 0) {
+        setSelectedHospital(hospitalsWithDistance[0]);
+      }
+    } catch (error) {
+      console.error("Error fetching hospitals:", error);
+      // Show error message to user
+      alert("Unable to fetch hospital data. Using mock data for demonstration.");
     }
-  }, [userLocation]);
+  };
+
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; // Distance in km
+    return distance;
+  };
+
+  const deg2rad = (deg) => {
+    return deg * (Math.PI / 180);
+  };
 
   // Simulate real-time ambulance updates after route details are available
   useEffect(() => {
@@ -68,6 +130,10 @@ const Emergency = () => {
 
   const handleCallAmbulance = () => {
     setIsAmbulanceCalled(true);
+  };
+
+  const handleHospitalSelect = (hospital) => {
+    setSelectedHospital(hospital);
   };
 
   const emergencyContacts = [
@@ -179,7 +245,7 @@ const Emergency = () => {
             </div>
           ) : (
             <div className="space-y-8">
-              {userLocation && hospitalLocation && (
+              {userLocation && (
                 <>
                   {/* Map Section with Better Styling */}
                   <div className="bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-red-200">
@@ -189,17 +255,54 @@ const Emergency = () => {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                         </svg>
-                        Ambulance Route
+                        Nearby Hospitals
                       </h2>
                     </div>
                     <div className="w-full h-[350px] md:h-[450px]">
                       <AmbulanceMap
                         userLocation={userLocation}
-                        hospitalLocation={hospitalLocation}
+                        nearbyHospitals={nearbyHospitals}
+                        selectedHospital={selectedHospital}
                         onRouteDetails={setRouteDetails}
                       />
                     </div>
                   </div>
+
+                  {/* Nearby Hospitals List */}
+                  {nearbyHospitals.length > 0 && (
+                    <div className="bg-white rounded-xl shadow-xl p-6 border-2 border-red-200">
+                      <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                        Select Hospital
+                      </h2>
+                      <div className="space-y-4">
+                        {nearbyHospitals.map((hospital) => (
+                          <button
+                            key={hospital._id}
+                            onClick={() => handleHospitalSelect(hospital)}
+                            className={`w-full p-4 rounded-lg border-2 transition-all ${
+                              selectedHospital?._id === hospital._id
+                                ? "border-red-500 bg-red-50"
+                                : "border-gray-200 hover:border-red-300"
+                            }`}
+                          >
+                            <div className="flex justify-between items-center">
+                              <div>
+                                <h3 className="font-semibold text-gray-800">{hospital.name}</h3>
+                                <p className="text-sm text-gray-600">{hospital.address}</p>
+                              </div>
+                              <div className="text-right">
+                                <p className="font-bold text-red-600">{hospital.distance.toFixed(1)} km</p>
+                                <p className="text-sm text-gray-500">{hospital.contact}</p>
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Route Details Section */}
                   {routeDetails && (

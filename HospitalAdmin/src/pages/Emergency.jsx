@@ -1,27 +1,29 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import PatientDetailsModal from "../components/PatientDetailsModal";
 
 export default function Emergency() {
-  const [emergencyCases, setEmergencyCases] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedPatient, setSelectedPatient] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    const fetchEmergencyCases = async () => {
+    const fetchAppointments = async () => {
       try {
-        const response = await axios.get("/api/admin/emergency");
-        setEmergencyCases(Array.isArray(response.data) ? response.data : []);
+        const response = await fetch("http://localhost:3001/appointments");
+        const data = await response.json();
+        setAppointments(data);
+        setLoading(false);
       } catch (err) {
         setError("Failed to fetch emergency cases");
-        console.error("Error fetching emergency cases:", err);
-        setEmergencyCases([]);
-      } finally {
+        console.error("Error fetching appointments:", err);
         setLoading(false);
       }
     };
 
-    fetchEmergencyCases();
-    const interval = setInterval(fetchEmergencyCases, 30000); // Refresh every 30 seconds
+    fetchAppointments();
+    const interval = setInterval(fetchAppointments, 30000); // Refresh every 30 seconds
     return () => clearInterval(interval);
   }, []);
 
@@ -32,6 +34,16 @@ export default function Emergency() {
   if (error) {
     return <div className="text-center py-12 text-red-600">{error}</div>;
   }
+
+  // Filter emergency cases and sort by priority rating
+  const emergencyCases = appointments
+    .filter((apt) => apt.disease.toLowerCase() === "emergency")
+    .sort((a, b) => b.priorityRating - a.priorityRating);
+
+  const handleViewDetails = (case_) => {
+    setSelectedPatient(case_);
+    setIsModalOpen(true);
+  };
 
   return (
     <div>
@@ -72,41 +84,44 @@ export default function Emergency() {
                 </li>
               ) : (
                 emergencyCases.map((case_) => (
-                  <li key={case_.id} className="px-4 py-4 sm:px-6">
+                  <li key={case_._id} className="px-4 py-4 sm:px-6">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <div className="flex-shrink-0">
                           <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
                             <span className="text-red-600 font-medium">
-                              {case_.priority}
+                              {case_.priorityRating}
                             </span>
                           </div>
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
-                            {case_.patientName}
+                            Patient ID: {case_.patientId}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {case_.condition}
+                            Time Slot: {case_.selectedTimeSlot}
                           </div>
                           <div className="text-sm text-gray-500">
-                            Arrival Time: {case_.arrivalTime}
+                            Date: {new Date(case_.date).toLocaleDateString()}
                           </div>
                         </div>
                       </div>
                       <div className="flex items-center space-x-4">
                         <span
                           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            case_.status === "Critical"
+                            case_.priorityRating > 15
                               ? "bg-red-100 text-red-800"
-                              : case_.status === "Urgent"
+                              : case_.priorityRating > 10
                               ? "bg-orange-100 text-orange-800"
                               : "bg-yellow-100 text-yellow-800"
                           }`}
                         >
-                          {case_.status}
+                          Priority: {case_.priorityRating}
                         </span>
-                        <button className="text-blue-600 hover:text-blue-900">
+                        <button
+                          onClick={() => handleViewDetails(case_)}
+                          className="text-blue-600 hover:text-blue-900"
+                        >
                           View Details
                         </button>
                         <button className="text-blue-600 hover:text-blue-900">
@@ -121,6 +136,14 @@ export default function Emergency() {
           </div>
         </div>
       </div>
+
+      {selectedPatient && (
+        <PatientDetailsModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          patientData={selectedPatient}
+        />
+      )}
     </div>
   );
 }

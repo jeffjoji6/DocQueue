@@ -16,8 +16,8 @@ const Quiz = () => {
   const [disease, setDisease] = useState(""); // New state for disease
 
   const navigate = useNavigate();
-  // const [patientName, setPatientName] = useState(""); // New state for patient name
-  // const [phoneNumber, setPhoneNumber] = useState(""); // New state for phone number
+  const [patientName, setPatientName] = useState(""); // New state for patient name
+  const [phoneNumber, setPhoneNumber] = useState(""); // New state for phone number
 
   // Sample IDs for patient, hospital, and doctor (replace as needed)
   const patientId = 1;
@@ -322,7 +322,7 @@ const Quiz = () => {
     if (score > 5) {
       navigate("/emergency");
     } else if (score > 4) {
-      navigate("/appointments");
+      setQuizComplete(true);
     } else {
       navigate("/ai-doctor", {
         state: {
@@ -346,8 +346,8 @@ const Quiz = () => {
                 <input
                   type="text"
                   className="mt-2 p-2 border border-gray-400 rounded-md w-full"
-                  // value={patientName}
-                  // onChange={(e) => setPatientName(e.target.value)}
+                  value={patientName}
+                  onChange={(e) => setPatientName(e.target.value)}
                   placeholder="Enter your name"
                   required
                 />
@@ -358,8 +358,8 @@ const Quiz = () => {
                 <input
                   type="tel"
                   className="mt-2 p-2 border border-gray-400 rounded-md w-full"
-                  // value={phoneNumber}
-                  // onChange={(e) => setPhoneNumber(e.target.value)}
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
                   placeholder="Enter your phone number"
                   required
                 />

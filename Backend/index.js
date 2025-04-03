@@ -66,7 +66,7 @@ const appointmentSchema = new mongoose.Schema({
   disease: {
     type: String,
     required: true,
-    enum: ["Fever", "Diarrhea", "Chestpain", "Headache"],
+    enum: ["Fever", "Diarrhea", "Chest pain", "Headache"],
   },
 });
 

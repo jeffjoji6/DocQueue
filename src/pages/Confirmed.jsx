@@ -37,7 +37,7 @@ const Confirmed = () => {
                 Return to Home
               </button>
             </Link>
-            <Link to="/Hospitaldetails">
+            <Link to="/hospitallist">
               <button className="w-full px-8 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all duration-200">
                 Book Another Appointment
               </button>

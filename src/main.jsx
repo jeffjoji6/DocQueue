@@ -12,7 +12,7 @@ import Confirmationpop from "./components/Confirmationpop.jsx";
 import AboutUs from "./pages/Aboutus.jsx";
 import AiDoctor from "./pages/AiDoctor.jsx";
 import HospitalList from "./pages/HospitalList.jsx";
-
+import Confirmed from "./pages/Confirmed.jsx";
 import EmergencyAmbulance from "./pages/EmergencyAmbulance.jsx";
 
 const Layout = () => {
@@ -35,6 +35,7 @@ const router = createBrowserRouter([
       { path: "/quiz", element: <Quiz /> },
       { path: "/timeslot", element: <Timeslot /> },
       { path: "/confirmationpop", element: <Confirmationpop /> },
+      { path: "/confirmed", element: <Confirmed /> },
       { path: "/aboutus", element: <AboutUs /> },
       { path: "/ai-doctor", element: <AiDoctor /> },
       { path: "/hospitallist", element: <HospitalList /> },

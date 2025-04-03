@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import HospitalResources from "../components/HospitalResources";
+import ReportGenerator from "../components/ReportGenerator";
 
 import {
   UsersIcon,
@@ -112,13 +113,24 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isResourcesModalOpen, setIsResourcesModalOpen] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
         const response = await fetch("http://localhost:3001/appointments");
         const data = await response.json();
-        setAppointments(data);
+
+        // Ensure all appointments have proper date objects and standardized status
+        const processedData = data.map((apt) => ({
+          ...apt,
+          date: new Date(apt.date),
+          status: apt.status.toLowerCase(),
+          disease: apt.disease || "Not Specified",
+          priorityRating: parseInt(apt.priorityRating) || 0,
+        }));
+
+        setAppointments(processedData);
         setLoading(false);
       } catch (err) {
         setError("Failed to fetch appointments");
@@ -141,7 +153,7 @@ export default function Dashboard() {
   // Calculate statistics
   const totalAppointments = appointments.length;
   const todayAppointments = appointments.filter(
-    (apt) => new Date(apt.date).toDateString() === new Date().toDateString()
+    (apt) => apt.date.toDateString() === new Date().toDateString()
   ).length;
   const emergencyCases = appointments.filter(
     (apt) => apt.disease.toLowerCase() === "emergency"
@@ -151,17 +163,221 @@ export default function Dashboard() {
   ).length;
   const uniquePatients = new Set(appointments.map((apt) => apt.patientId)).size;
 
-  // Calculate appointment status distribution
+  // Calculate appointment status distribution with standardized statuses
   const statusDistribution = appointments.reduce((acc, apt) => {
-    acc[apt.status] = (acc[apt.status] || 0) + 1;
+    const status = apt.status.toLowerCase();
+    acc[status] = (acc[status] || 0) + 1;
     return acc;
   }, {});
 
-  // Calculate disease distribution
+  // Calculate disease distribution with proper grouping
   const diseaseDistribution = appointments.reduce((acc, apt) => {
-    acc[apt.disease] = (acc[apt.disease] || 0) + 1;
+    const disease = apt.disease || "Not Specified";
+    acc[disease] = (acc[disease] || 0) + 1;
     return acc;
   }, {});
+
+  // Calculate appointment trends for the last 7 days
+  const getLast7DaysData = () => {
+    const days = Array.from({ length: 7 }, (_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - (6 - i));
+      return date;
+    });
+
+    return days.reduce((acc, date) => {
+      const dayStr = date.toDateString();
+      acc[dayStr] = appointments.filter(
+        (apt) => apt.date.toDateString() === dayStr
+      ).length;
+      return acc;
+    }, {});
+  };
+
+  const appointmentTrends = getLast7DaysData();
+
+  // Mock data for hospital resources
+  const doctors = [
+    {
+      id: "1",
+      name: "Dr. Smith",
+      specialty: "General Medicine",
+      status: "Available",
+      currentPatients: 2,
+      maxPatients: 5,
+    },
+    {
+      id: "2",
+      name: "Dr. Johnson",
+      specialty: "Cardiology",
+      status: "In Surgery",
+      currentPatients: 3,
+      maxPatients: 4,
+    },
+    {
+      id: "3",
+      name: "Dr. Williams",
+      specialty: "Pediatrics",
+      status: "Available",
+      currentPatients: 1,
+      maxPatients: 6,
+    },
+    {
+      id: "4",
+      name: "Dr. Brown",
+      specialty: "Orthopedics",
+      status: "On Call",
+      currentPatients: 0,
+      maxPatients: 4,
+    },
+    {
+      id: "5",
+      name: "Dr. Davis",
+      specialty: "Neurology",
+      status: "Available",
+      currentPatients: 2,
+      maxPatients: 5,
+    },
+  ];
+
+  const rooms = [
+    {
+      id: "101",
+      type: "General Ward",
+      capacity: 4,
+      occupied: 3,
+      status: "Available",
+    },
+    {
+      id: "102",
+      type: "General Ward",
+      capacity: 4,
+      occupied: 4,
+      status: "Full",
+    },
+    {
+      id: "201",
+      type: "Private Room",
+      capacity: 1,
+      occupied: 1,
+      status: "Occupied",
+    },
+    {
+      id: "202",
+      type: "Private Room",
+      capacity: 1,
+      occupied: 0,
+      status: "Available",
+    },
+    {
+      id: "301",
+      type: "ICU",
+      capacity: 2,
+      occupied: 1,
+      status: "Available",
+    },
+    {
+      id: "302",
+      type: "ICU",
+      capacity: 2,
+      occupied: 2,
+      status: "Full",
+    },
+    {
+      id: "401",
+      type: "Operation Theater",
+      capacity: 1,
+      occupied: 0,
+      status: "Available",
+    },
+    {
+      id: "402",
+      type: "Operation Theater",
+      capacity: 1,
+      occupied: 1,
+      status: "In Use",
+    },
+  ];
+
+  const equipment = [
+    {
+      id: "E001",
+      name: "X-Ray Machine",
+      type: "Diagnostic",
+      status: "Available",
+      location: "Radiology Department",
+    },
+    {
+      id: "E002",
+      name: "MRI Scanner",
+      type: "Diagnostic",
+      status: "In Use",
+      location: "Radiology Department",
+    },
+    {
+      id: "E003",
+      name: "CT Scanner",
+      type: "Diagnostic",
+      status: "Available",
+      location: "Radiology Department",
+    },
+    {
+      id: "E004",
+      name: "Ultrasound Machine",
+      type: "Diagnostic",
+      status: "In Use",
+      location: "Radiology Department",
+    },
+    {
+      id: "E005",
+      name: "Ventilator",
+      type: "Treatment",
+      status: "Available",
+      location: "ICU",
+    },
+    {
+      id: "E006",
+      name: "ECG Machine",
+      type: "Diagnostic",
+      status: "Available",
+      location: "Cardiology Department",
+    },
+    {
+      id: "E007",
+      name: "Dialysis Machine",
+      type: "Treatment",
+      status: "In Use",
+      location: "Nephrology Department",
+    },
+    {
+      id: "E008",
+      name: "Anesthesia Machine",
+      type: "Treatment",
+      status: "In Use",
+      location: "Operation Theater",
+    },
+  ];
+
+  // Prepare data for the report with processed data
+  const reportData = {
+    appointments: appointments.map((apt) => ({
+      ...apt,
+      date: apt.date.toISOString(), // Convert date to string for PDF generation
+    })),
+    doctors,
+    rooms,
+    equipment,
+    statistics: {
+      totalAppointments,
+      todayAppointments,
+      emergencyCases,
+      highPriorityCases,
+      uniquePatients,
+    },
+    statusDistribution,
+    diseaseDistribution,
+    appointmentTrends,
+  };
 
   return (
     <div>
@@ -172,13 +388,20 @@ export default function Dashboard() {
             Overview of hospital operations and patient statistics.
           </p>
         </div>
-        <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+        <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none space-x-3">
           <button
             type="button"
             onClick={() => setIsResourcesModalOpen(true)}
             className="block rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
           >
             Manage Resources
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsReportModalOpen(true)}
+            className="block rounded-md bg-green-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+          >
+            Generate Report
           </button>
         </div>
       </div>
@@ -290,6 +513,12 @@ export default function Dashboard() {
       <HospitalResources
         isOpen={isResourcesModalOpen}
         onClose={() => setIsResourcesModalOpen(false)}
+      />
+
+      <ReportGenerator
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        data={reportData}
       />
     </div>
   );

@@ -35,7 +35,7 @@ const AiDoctor = () => {
 
     try {
       // Using our backend endpoint
-      const response = await fetch("http://localhost:3001/api/ai-doctor/chat", {
+      const response = await fetch("http://localhost:3001/api/ai-doctor/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

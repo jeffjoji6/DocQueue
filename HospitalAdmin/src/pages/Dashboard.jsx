@@ -388,7 +388,7 @@ export default function Dashboard() {
             Overview of hospital operations and patient statistics.
           </p>
         </div>
-        <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none space-x-3">
+        <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none space-x-3 flex">
           <button
             type="button"
             onClick={() => setIsResourcesModalOpen(true)}

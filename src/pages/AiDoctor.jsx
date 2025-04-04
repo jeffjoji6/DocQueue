@@ -35,17 +35,20 @@ const AiDoctor = () => {
 
     try {
       // Using our backend endpoint
-      const response = await fetch("http://localhost:3001/api/ai-doctor/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: inputMessage,
-          disease: disease || "",
-          score: score || 0,
-        }),
-      });
+      const response = await fetch(
+        "https://docqueue-backend.onrender.com/api/ai-doctor/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: inputMessage,
+            disease: disease || "",
+            score: score || 0,
+          }),
+        }
+      );
 
       const data = await response.json();
 

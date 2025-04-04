@@ -273,13 +273,16 @@ const Quiz = () => {
       };
 
       try {
-        const response = await fetch("http://localhost:3001/appointments", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(appointmentData),
-        });
+        const response = await fetch(
+          "https://docqueue-backend.onrender.com/appointments",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(appointmentData),
+          }
+        );
 
         if (response.ok) {
           const data = await response.json();

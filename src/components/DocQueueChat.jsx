@@ -19,7 +19,7 @@ const DocQueueChat = () => {
   const getResponse = async (message) => {
     try {
       const response = await fetch(
-        "http://localhost:3001/api/docqueue-chat/chat",
+        "https://docqueue-backend.onrender.com/api/docqueue-chat/chat",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

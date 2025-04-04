@@ -39,7 +39,7 @@ class EmergencyService {
       this.playEmergencySound();
 
       // Send emergency request to backend
-      const response = await fetch("http://localhost:3001/api/emergency", {
+      const response = await fetch("https://docqueue-backend.onrender.com/api/emergency", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -67,7 +67,7 @@ class EmergencyService {
   async getNearbyAmbulances(location) {
     try {
       const response = await fetch(
-        `http://localhost:3001/api/ambulances/nearby`,
+        `https://docqueue-backend.onrender.com/api/ambulances/nearby`,
         {
           method: "POST",
           headers: {
@@ -93,7 +93,7 @@ class EmergencyService {
   async trackAmbulance(ambulanceId) {
     try {
       const response = await fetch(
-        `http://localhost:3001/api/ambulances/${ambulanceId}/track`
+        `https://docqueue-backend.onrender.com/api/ambulances/${ambulanceId}/track`
       );
       if (!response.ok) {
         throw new Error("Failed to track ambulance");

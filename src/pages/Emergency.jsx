@@ -51,7 +51,7 @@ const Emergency = () => {
           address: "123 Main St, City",
           contact: "+91 1234567890",
           latitude: location.lat + 0.01,
-          longitude: location.lng + 0.01
+          longitude: location.lng + 0.01,
         },
         {
           _id: "2",
@@ -59,7 +59,7 @@ const Emergency = () => {
           address: "456 Park Ave, City",
           contact: "+91 9876543210",
           latitude: location.lat - 0.01,
-          longitude: location.lng - 0.01
+          longitude: location.lng - 0.01,
         },
         {
           _id: "3",
@@ -67,20 +67,22 @@ const Emergency = () => {
           address: "789 Oak St, City",
           contact: "+91 5555555555",
           latitude: location.lat + 0.02,
-          longitude: location.lng - 0.02
-        }
+          longitude: location.lng - 0.02,
+        },
       ];
-      
+
       // Calculate distance for each hospital and sort by distance
-      const hospitalsWithDistance = mockHospitals.map(hospital => ({
-        ...hospital,
-        distance: calculateDistance(
-          location.lat,
-          location.lng,
-          hospital.latitude,
-          hospital.longitude
-        )
-      })).sort((a, b) => a.distance - b.distance);
+      const hospitalsWithDistance = mockHospitals
+        .map((hospital) => ({
+          ...hospital,
+          distance: calculateDistance(
+            location.lat,
+            location.lng,
+            hospital.latitude,
+            hospital.longitude
+          ),
+        }))
+        .sort((a, b) => a.distance - b.distance);
 
       setNearbyHospitals(hospitalsWithDistance);
       if (hospitalsWithDistance.length > 0) {
@@ -89,7 +91,9 @@ const Emergency = () => {
     } catch (error) {
       console.error("Error fetching hospitals:", error);
       // Show error message to user
-      alert("Unable to fetch hospital data. Using mock data for demonstration.");
+      alert(
+        "Unable to fetch hospital data. Using mock data for demonstration."
+      );
     }
   };
 
@@ -99,8 +103,10 @@ const Emergency = () => {
     const dLon = deg2rad(lon2 - lon1);
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      Math.cos(deg2rad(lat1)) *
+        Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = R * c; // Distance in km
     return distance;
@@ -163,13 +169,16 @@ const Emergency = () => {
         status: "scheduled",
       };
 
-      const response = await fetch("http://localhost:3001/appointments", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(appointmentData),
-      });
+      const response = await fetch(
+        "https://docqueue-backend.onrender.com/appointments",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(appointmentData),
+        }
+      );
 
       if (response.ok) {
         setUrgentAppointmentBooked(true);
@@ -396,8 +405,19 @@ const Emergency = () => {
                   {nearbyHospitals.length > 0 && (
                     <div className="bg-white rounded-xl shadow-xl p-6 border-2 border-red-200">
                       <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        <svg
+                          className="w-5 h-5 text-red-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                          ></path>
                         </svg>
                         Select Hospital
                       </h2>
@@ -414,12 +434,20 @@ const Emergency = () => {
                           >
                             <div className="flex justify-between items-center">
                               <div>
-                                <h3 className="font-semibold text-gray-800">{hospital.name}</h3>
-                                <p className="text-sm text-gray-600">{hospital.address}</p>
+                                <h3 className="font-semibold text-gray-800">
+                                  {hospital.name}
+                                </h3>
+                                <p className="text-sm text-gray-600">
+                                  {hospital.address}
+                                </p>
                               </div>
                               <div className="text-right">
-                                <p className="font-bold text-red-600">{hospital.distance.toFixed(1)} km</p>
-                                <p className="text-sm text-gray-500">{hospital.contact}</p>
+                                <p className="font-bold text-red-600">
+                                  {hospital.distance.toFixed(1)} km
+                                </p>
+                                <p className="text-sm text-gray-500">
+                                  {hospital.contact}
+                                </p>
                               </div>
                             </div>
                           </button>

@@ -76,7 +76,7 @@ const QuizInfo = () => {
               onClick={() => navigate('/quiz')}
               className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-200 transform hover:scale-[1.02]"
             >
-              Start Smart Quiz
+              Proceed to Quiz
             </button>
           </div>
         </div>

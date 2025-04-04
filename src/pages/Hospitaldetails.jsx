@@ -228,7 +228,7 @@ const Hospitaldetails = () => {
                   </div>
                 </div>
 
-                <Link to="/Quiz" className="block w-full">
+                <Link to="/quiz-info" className="block w-full">
                   <button className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-200 transform hover:scale-[1.02]">
                     Start Smart Quiz
                   </button>

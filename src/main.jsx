@@ -7,6 +7,7 @@ import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import Hospitaldetails from "./pages/Hospitaldetails.jsx";
 import Emergency from "./pages/Emergency.jsx";
 import Quiz from "./components/Quiz.jsx";
+import QuizInfo from "./components/QuizInfo.jsx";
 import Timeslot from "./components/Timeslot.jsx";
 import Confirmationpop from "./components/Confirmationpop.jsx";
 import AboutUs from "./pages/Aboutus.jsx";
@@ -32,6 +33,7 @@ const router = createBrowserRouter([
       { path: "/", element: <App /> },
       { path: "/emergency", element: <Emergency /> },
       { path: "/HospitalDetails/:id", element: <Hospitaldetails /> },
+      { path: "/quiz-info", element: <QuizInfo /> },
       { path: "/quiz", element: <Quiz /> },
       { path: "/timeslot", element: <Timeslot /> },
       { path: "/confirmationpop", element: <Confirmationpop /> },
@@ -39,7 +41,6 @@ const router = createBrowserRouter([
       { path: "/aboutus", element: <AboutUs /> },
       { path: "/ai-doctor", element: <AiDoctor /> },
       { path: "/hospitallist", element: <HospitalList /> },
-
       { path: "/emergency-ambulance", element: <EmergencyAmbulance /> },
     ],
   },

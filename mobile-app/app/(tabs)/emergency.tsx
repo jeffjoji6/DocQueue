@@ -199,26 +199,29 @@ export default function EmergencyScreen() {
         {/* Header */}
         <View style={styles.headerContainer}>
           <Text style={styles.headerTitle}>Emergency Services</Text>
+          <Text style={styles.headerSubtitle}>Immediate Medical Assistance</Text>
         </View>
 
         {/* Emergency Button */}
-        <TouchableOpacity
-          style={[
-            styles.emergencyButton,
-            isEmergency && styles.emergencyButtonActive,
-          ]}
-          onPress={isEmergency ? handleStopEmergency : handleEmergencyPress}
-        >
-          <Text style={styles.emergencyButtonText}>
-            {isEmergency ? 'STOP EMERGENCY' : 'EMERGENCY ALERT'}
-          </Text>
-        </TouchableOpacity>
+        <View style={styles.emergencySection}>
+          <TouchableOpacity
+            style={[
+              styles.emergencyButton,
+              isEmergency && styles.emergencyButtonActive,
+            ]}
+            onPress={isEmergency ? handleStopEmergency : handleEmergencyPress}
+          >
+            <Text style={styles.emergencyButtonText}>
+              {isEmergency ? 'STOP EMERGENCY' : 'EMERGENCY ALERT'}
+            </Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Quick Actions */}
         <View style={styles.quickActions}>
           <TouchableOpacity style={styles.actionButton} onPress={handleCallEmergency}>
-            <PhoneIcon width={24} height={24} color={Colors[colorScheme].text} />
-            <ThemedText style={styles.actionButtonText}>Call 911</ThemedText>
+            <PhoneIcon width={24} height={24} color="#FFFFFF" />
+            <Text style={styles.actionButtonText}>Call 911</Text>
           </TouchableOpacity>
         </View>
 
@@ -260,16 +263,16 @@ export default function EmergencyScreen() {
         {/* Ambulance Status */}
         {ambulanceStatus && (
           <View style={styles.statusContainer}>
-            <AmbulanceIcon width={24} height={24} color={Colors[colorScheme].text} />
-            <ThemedText style={styles.statusText}>
+            <AmbulanceIcon width={24} height={24} color="#007AFF" />
+            <Text style={styles.statusText}>
               {ambulanceStatus === 'searching' && 'Searching for nearest ambulance...'}
               {ambulanceStatus === 'found' && 'Ambulance found! En route...'}
               {ambulanceStatus === 'arriving' && 'Ambulance arriving...'}
-            </ThemedText>
+            </Text>
             {eta !== null && (
               <View style={styles.etaContainer}>
-                <TimerIcon width={20} height={20} color={Colors[colorScheme].text} />
-                <ThemedText style={styles.etaText}>ETA: {eta} minutes</ThemedText>
+                <TimerIcon width={20} height={20} color="#007AFF" />
+                <Text style={styles.etaText}>ETA: {eta} minutes</Text>
               </View>
             )}
           </View>
@@ -278,11 +281,11 @@ export default function EmergencyScreen() {
         {/* Nearby Hospitals */}
         <View style={styles.hospitalsContainer}>
           <View style={styles.sectionHeader}>
-            <HospitalIcon width={24} height={24} color={Colors[colorScheme].text} />
-            <ThemedText style={styles.sectionTitle}>Nearby Hospitals</ThemedText>
+            <HospitalIcon width={24} height={24} color="#007AFF" />
+            <Text style={styles.sectionTitle}>Nearby Hospitals</Text>
           </View>
           {isLoadingHospitals ? (
-            <ActivityIndicator size="large" color="#FF3B30" />
+            <ActivityIndicator size="large" color="#007AFF" />
           ) : (
             nearbyHospitals.map((hospital, index) => (
               <TouchableOpacity
@@ -291,13 +294,13 @@ export default function EmergencyScreen() {
                 onPress={() => handleNavigateToHospital(hospital)}
               >
                 <View style={styles.hospitalInfo}>
-                  <ThemedText style={styles.hospitalName}>{hospital.name}</ThemedText>
-                  <ThemedText style={styles.hospitalAddress}>{hospital.address}</ThemedText>
+                  <Text style={styles.hospitalName}>{hospital.name}</Text>
+                  <Text style={styles.hospitalAddress}>{hospital.address}</Text>
                   <View style={styles.hospitalDetails}>
-                    <ThemedText style={styles.hospitalDistance}>{hospital.distance}km away</ThemedText>
-                    <ThemedText style={styles.hospitalRating}>★ {hospital.rating}</ThemedText>
+                    <Text style={styles.hospitalDistance}>{hospital.distance}km away</Text>
+                    <Text style={styles.hospitalRating}>★ {hospital.rating}</Text>
                     {hospital.isOpen24Hours && (
-                      <ThemedText style={styles.hospitalOpen}>24/7</ThemedText>
+                      <Text style={styles.hospitalOpen}>24/7</Text>
                     )}
                   </View>
                 </View>
@@ -314,26 +317,26 @@ export default function EmergencyScreen() {
 
         {/* Emergency Instructions */}
         <View style={styles.instructionsContainer}>
-          <InfoIcon width={24} height={24} color={Colors[colorScheme].text} />
-          <ThemedText style={styles.sectionTitle}>Emergency Instructions</ThemedText>
-          <ThemedText style={styles.instructionText}>
+          <InfoIcon width={24} height={24} color="#007AFF" />
+          <Text style={styles.sectionTitle}>Emergency Instructions</Text>
+          <Text style={styles.instructionText}>
             1. Stay calm and follow instructions{'\n'}
             2. Keep the patient lying flat{'\n'}
             3. Do not give food or water{'\n'}
             4. Keep airways clear{'\n'}
             5. Apply first aid if trained
-          </ThemedText>
+          </Text>
         </View>
 
         {/* Emergency Contacts */}
         <View style={styles.contactsContainer}>
-          <ContactIcon width={24} height={24} color={Colors[colorScheme].text} />
-          <ThemedText style={styles.sectionTitle}>Emergency Contacts</ThemedText>
+          <ContactIcon width={24} height={24} color="#007AFF" />
+          <Text style={styles.sectionTitle}>Emergency Contacts</Text>
           <TouchableOpacity onPress={() => Linking.openURL('tel:911')}>
-            <ThemedText style={styles.contactText}>Emergency Services: 911</ThemedText>
+            <Text style={styles.contactText}>Emergency Services: 911</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => Linking.openURL('tel:+1234567890')}>
-            <ThemedText style={styles.contactText}>Hospital: (123) 456-7890</ThemedText>
+            <Text style={styles.contactText}>Hospital: (123) 456-7890</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -344,26 +347,39 @@ export default function EmergencyScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
   },
   scrollView: {
     flex: 1,
   },
   headerContainer: {
-    height: 200,
-    backgroundColor: '#FF3B30',
+    height: 180,
+    backgroundColor: '#007AFF',
     justifyContent: 'center',
     alignItems: 'center',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
   },
   headerTitle: {
     fontSize: 28,
     fontWeight: 'bold',
     color: '#FFFFFF',
+    marginBottom: 8,
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    opacity: 0.9,
+  },
+  emergencySection: {
+    padding: 20,
+    alignItems: 'center',
   },
   emergencyButton: {
     backgroundColor: '#FF3B30',
     padding: 20,
-    borderRadius: 10,
-    margin: 20,
+    borderRadius: 12,
+    width: '100%',
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -381,14 +397,14 @@ const styles = StyleSheet.create({
   },
   quickActions: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
     padding: 20,
   },
   actionButton: {
     alignItems: 'center',
     padding: 15,
-    backgroundColor: '#F2F2F7',
-    borderRadius: 10,
+    backgroundColor: '#007AFF',
+    borderRadius: 12,
     width: '45%',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -399,11 +415,13 @@ const styles = StyleSheet.create({
   actionButtonText: {
     marginTop: 8,
     fontSize: 16,
+    color: '#FFFFFF',
+    fontWeight: '600',
   },
   mapContainer: {
     height: 200,
     margin: 20,
-    borderRadius: 10,
+    borderRadius: 12,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -417,10 +435,12 @@ const styles = StyleSheet.create({
   statusContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F2F2F7',
+    backgroundColor: '#FFFFFF',
     padding: 15,
     margin: 20,
-    borderRadius: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e9ecef',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -430,6 +450,7 @@ const styles = StyleSheet.create({
   statusText: {
     marginLeft: 10,
     fontSize: 16,
+    color: '#333',
   },
   etaContainer: {
     flexDirection: 'row',
@@ -439,6 +460,7 @@ const styles = StyleSheet.create({
   etaText: {
     marginLeft: 5,
     fontSize: 14,
+    color: '#007AFF',
   },
   hospitalsContainer: {
     padding: 20,
@@ -449,16 +471,19 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     marginLeft: 10,
+    color: '#007AFF',
   },
   hospitalCard: {
     flexDirection: 'row',
-    backgroundColor: '#F2F2F7',
+    backgroundColor: '#FFFFFF',
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 12,
     marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#e9ecef',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -471,6 +496,7 @@ const styles = StyleSheet.create({
   hospitalName: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#333',
   },
   hospitalAddress: {
     fontSize: 14,
@@ -501,10 +527,12 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   instructionsContainer: {
-    backgroundColor: '#F2F2F7',
+    backgroundColor: '#FFFFFF',
     padding: 20,
     margin: 20,
-    borderRadius: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e9ecef',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -514,12 +542,16 @@ const styles = StyleSheet.create({
   instructionText: {
     fontSize: 16,
     lineHeight: 24,
+    color: '#666',
+    marginTop: 10,
   },
   contactsContainer: {
-    backgroundColor: '#F2F2F7',
+    backgroundColor: '#FFFFFF',
     padding: 20,
     margin: 20,
-    borderRadius: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e9ecef',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,

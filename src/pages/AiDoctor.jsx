@@ -100,7 +100,7 @@ const AiDoctor = () => {
             </div>
           </div>
 
-          <div className="h-[500px] overflow-y-auto mb-6 p-4 bg-gray-50 rounded-lg">
+          <div className="h-[300px] overflow-y-auto mb-6 p-4 bg-gray-50 rounded-lg">
             {messages.map((message, index) => (
               <div
                 key={index}

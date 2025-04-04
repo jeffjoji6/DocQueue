@@ -58,13 +58,16 @@ const CreateAppointmentModal = ({ isOpen, onClose, onAppointmentCreated }) => {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:3001/appointments", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        "https://docqueue-backend.onrender.com/appointments",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to create appointment");

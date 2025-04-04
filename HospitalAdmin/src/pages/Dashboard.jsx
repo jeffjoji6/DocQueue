@@ -118,7 +118,9 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await fetch("http://localhost:3001/appointments");
+        const response = await fetch(
+          "https://docqueue-backend.onrender.com/appointments"
+        );
         const data = await response.json();
 
         // Ensure all appointments have proper date objects and standardized status

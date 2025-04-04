@@ -35,7 +35,9 @@ const Analytics = () => {
 
   const fetchAppointments = async () => {
     try {
-      const response = await fetch("http://localhost:3001/appointments");
+      const response = await fetch(
+        "https://docqueue-backend.onrender.com/appointments"
+      );
       const data = await response.json();
       setAppointments(data);
       setLoading(false);
